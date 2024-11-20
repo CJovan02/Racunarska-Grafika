@@ -1,0 +1,22 @@
+Sve koordinate: 
+Format: Ime slike: X, Y, ugao, mirrorX, mirrorY
+1: -48, -48, 25, false, true, 
+2: -58, 236, 19, true, false, 
+3: 256, -64, -76, true, false, 
+4: 248, 250, 161, true, false, 
+5: 240, 92, 252, false, true, 
+6: 92, 248, 114, true, false, 
+7: 106, -54, -125, true, false, 
+8: -60, 100, -72, false, true, 
+9: 90, 90, -121, false, true, 
+
+Ovo samo copy paste-ujes direktno u kodu. Moras sam da promenis format funkcije da bi lepo ispisalo.
+PlacePuzzle(pDC, CString("./slike/1.bmp"), -48, -48, 25, false, true);
+PlacePuzzle(pDC, CString("./slike/2.bmp"), -58, 236, 19, true, false);
+PlacePuzzle(pDC, CString("./slike/3.bmp"), 256, -64, -76, true, false);
+PlacePuzzle(pDC, CString("./slike/4.bmp"), 248, 250, 161, true, false);
+PlacePuzzle(pDC, CString("./slike/5.bmp"), 240, 92, 252, false, true);
+PlacePuzzle(pDC, CString("./slike/6.bmp"), 92, 248, 114, true, false);
+PlacePuzzle(pDC, CString("./slike/7.bmp"), 106, -54, -125, true, false);
+PlacePuzzle(pDC, CString("./slike/8.bmp"), -60, 100, -72, false, true);
+PlacePuzzle(pDC, CString("./slike/9.bmp"), 90, 90, -121, false, true);
