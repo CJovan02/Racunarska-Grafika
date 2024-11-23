@@ -1,9 +1,10 @@
 
-// MonapuzzleView.cpp : implementation of the CMonapuzzleView class
+// IND_18981View.cpp : implementation of the CIND18981View class
 //
 
 #include "pch.h"
 #include "framework.h"
+#include "DImage.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -12,12 +13,13 @@
 // SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
 // and search filter handlers and allows sharing of document code with that project.
 #ifndef SHARED_HANDLERS
-#include "Monapuzzle.h"
-#include "DImage.h"
+#include "IND_18981.h"
 #endif
 
-#include "MonapuzzleDoc.h"
-#include "MonapuzzleView.h"
+#include "IND_18981Doc.h"
+#include "IND_18981View.h"
+
+using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -28,13 +30,12 @@ const float PI = 3.141592653f;
 const int GUNIT = 25; // Grid Unit
 const int N = 9;
 
-using namespace std;
 
-// CMonapuzzleView
+// CIND18981View
 
-IMPLEMENT_DYNCREATE(CMonapuzzleView, CView)
+IMPLEMENT_DYNCREATE(CIND18981View, CView)
 
-BEGIN_MESSAGE_MAP(CMonapuzzleView, CView)
+BEGIN_MESSAGE_MAP(CIND18981View, CView)
 	// Standard printing commands
 	ON_COMMAND(ID_FILE_PRINT, &CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CView::OnFilePrint)
@@ -42,9 +43,9 @@ BEGIN_MESSAGE_MAP(CMonapuzzleView, CView)
 	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
-// CMonapuzzleView construction/destruction
+// CIND18981View construction/destruction
 
-CMonapuzzleView::CMonapuzzleView() noexcept
+CIND18981View::CIND18981View() noexcept
 {
 	indeksSelekcije = 0;
 	if (UcitajKoordinate() == 0)
@@ -67,12 +68,11 @@ CMonapuzzleView::CMonapuzzleView() noexcept
 	}
 }
 
-CMonapuzzleView::~CMonapuzzleView()
+CIND18981View::~CIND18981View()
 {
-
 }
 
-BOOL CMonapuzzleView::PreCreateWindow(CREATESTRUCT& cs)
+BOOL CIND18981View::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: Modify the Window class or styles here by modifying
 	//  the CREATESTRUCT cs
@@ -81,7 +81,7 @@ BOOL CMonapuzzleView::PreCreateWindow(CREATESTRUCT& cs)
 }
 
 #pragma region Funkcije Transformacija
-void CMonapuzzleView::Translate(CDC* pDC, float dX, float dY, bool rightMultiply)
+void CIND18981View::Translate(CDC* pDC, float dX, float dY, bool rightMultiply)
 {
 	XFORM xform{};
 	xform.eM11 = 1.0;
@@ -93,7 +93,7 @@ void CMonapuzzleView::Translate(CDC* pDC, float dX, float dY, bool rightMultiply
 
 	pDC->ModifyWorldTransform(&xform, rightMultiply ? MWT_RIGHTMULTIPLY : MWT_LEFTMULTIPLY);
 }
-void CMonapuzzleView::Scale(CDC* pDC, float sX, float sY, bool rightMultiply)
+void CIND18981View::Scale(CDC* pDC, float sX, float sY, bool rightMultiply)
 {
 	XFORM xform{};
 	xform.eM11 = sX;
@@ -105,7 +105,7 @@ void CMonapuzzleView::Scale(CDC* pDC, float sX, float sY, bool rightMultiply)
 
 	pDC->ModifyWorldTransform(&xform, rightMultiply ? MWT_RIGHTMULTIPLY : MWT_LEFTMULTIPLY);
 }
-void CMonapuzzleView::Rotate(CDC* pDC, float angle, bool rightMultiply)
+void CIND18981View::Rotate(CDC* pDC, float angle, bool rightMultiply)
 {
 	angle = TO_RAD(angle);
 	XFORM xform{};
@@ -119,7 +119,7 @@ void CMonapuzzleView::Rotate(CDC* pDC, float angle, bool rightMultiply)
 
 	pDC->ModifyWorldTransform(&xform, rightMultiply ? MWT_RIGHTMULTIPLY : MWT_LEFTMULTIPLY);
 }
-void CMonapuzzleView::Mirror(CDC* pDC, bool mx, bool my, bool rightMultiply)
+void CIND18981View::Mirror(CDC* pDC, bool mx, bool my, bool rightMultiply)
 {
 	XFORM xform{};
 
@@ -134,7 +134,7 @@ void CMonapuzzleView::Mirror(CDC* pDC, bool mx, bool my, bool rightMultiply)
 }
 #pragma endregion
 
-void CMonapuzzleView::Sacuvaj()
+void CIND18981View::Sacuvaj()
 {
 	ofstream outFile("koordinate.txt");
 
@@ -146,26 +146,12 @@ void CMonapuzzleView::Sacuvaj()
 			string mirYForPrint = miroriY[i] ? "true" : "false";
 
 			outFile << dinamoX[i] << "|"
-					<< dinamoY[i] << "|"
-					<< rotacije[i] << "|"
-					<< miroriX[i] << "|"
-					<< miroriY[i] << endl;
+				<< dinamoY[i] << "|"
+				<< rotacije[i] << "|"
+				<< miroriX[i] << "|"
+				<< miroriY[i] << endl;
 		}
-		
-		//outFile << endl << "Ovo samo copy paste-ujes direktno u kodu. Moras sam da promenis format funkcije da bi lepo ispisalo." << endl;
-		//for (int i = 0; i < N; i++)
-		//{
-		//	string mirXForPrint = miroriX[i] ? "true" : "false";
-		//	string mirYForPrint = miroriY[i] ? "true" : "false";
 
-		//	outFile << "PlacePuzzle(pDC, CString(\"./slike/" << i + 1 << ".bmp\"), " 
-		//			<< dinamoX[i] << ", " 
-		//			<< dinamoY[i] << ", " 
-		//			<< rotacije[i] << ", " 
-		//			<< mirXForPrint << ", "
-		//			<< mirYForPrint << ");" << endl;
-		//}
-		
 		outFile.close();
 		cout << "Uspesno upisano u fajl 'koordinate.txt'" << endl;
 	}
@@ -175,7 +161,7 @@ void CMonapuzzleView::Sacuvaj()
 	}
 }
 
-int CMonapuzzleView::UcitajKoordinate()
+int CIND18981View::UcitajKoordinate()
 {
 	ifstream inputFile("koordinate.txt");
 	if (!inputFile) return 0;
@@ -206,7 +192,7 @@ int CMonapuzzleView::UcitajKoordinate()
 	return 1;
 }
 
-void CMonapuzzleView::DrawGrid(CDC* pDC)
+void CIND18981View::DrawGrid(CDC* pDC)
 {
 	CPen gridPen(BS_SOLID, 1, RGB(230, 230, 230));
 	CPen* oldPen = pDC->SelectObject(&gridPen);
@@ -225,7 +211,7 @@ void CMonapuzzleView::DrawGrid(CDC* pDC)
 	pDC->SelectObject(oldPen);
 }
 
-void CMonapuzzleView::PlacePuzzle(CDC* pDC, CString imeSlike, int x, int y, int angle, bool mirrorX, bool mirrorY, bool samoPlava)
+void CIND18981View::PlacePuzzle(CDC* pDC, CString imeSlike, int x, int y, int angle, bool mirrorX, bool mirrorY, bool samoPlava)
 {
 	XFORM oldTransform;
 	pDC->GetWorldTransform(&oldTransform);
@@ -234,14 +220,13 @@ void CMonapuzzleView::PlacePuzzle(CDC* pDC, CString imeSlike, int x, int y, int 
 	Rotate(pDC, angle);
 	Mirror(pDC, mirrorX, mirrorY);
 	Translate(pDC, 128, 128);
-
 	Translate(pDC, x, y);
 
 	DImage img;
 	img.Load(imeSlike);
 	int w = img.Width();
 	int h = img.Height();
-	
+
 	CBitmap bmpImage, bmpMask;
 
 	bmpImage.CreateCompatibleBitmap(pDC, w, h);
@@ -263,7 +248,7 @@ void CMonapuzzleView::PlacePuzzle(CDC* pDC, CString imeSlike, int x, int y, int 
 	pSrcDC->SetTextColor(RGB(255, 255, 255));
 	pSrcDC->SetBkColor(RGB(0, 0, 0));
 
-	
+	// FILTER OBAVEZNO PRE AND OPERACIJE
 	Filtriraj(&bmpImage, samoPlava);
 	pSrcDC->BitBlt(0, 0, w, h, pMaskDC, 0, 0, SRCAND);
 
@@ -277,7 +262,7 @@ void CMonapuzzleView::PlacePuzzle(CDC* pDC, CString imeSlike, int x, int y, int 
 	pDC->SetWorldTransform(&oldTransform);
 }
 
-void CMonapuzzleView::Filtriraj(CBitmap* bmpImage, bool boja)
+void CIND18981View::Filtriraj(CBitmap* bmpImage, bool boja)
 {
 	BITMAP bitmapStruct;
 	bmpImage->GetBitmap(&bitmapStruct);
@@ -295,12 +280,12 @@ void CMonapuzzleView::Filtriraj(CBitmap* bmpImage, bool boja)
 		BYTE b = imageBits[i];
 		BYTE g = imageBits[i + 1];
 		BYTE r = imageBits[i + 2];
-		
+
 		int grayedBit = 64 + (r + g + b) / 3;
 		if (grayedBit > 255) grayedBit = 255;
 
-		r = g = boja ? 0 : grayedBit;
-		b = grayedBit;
+		b = g = boja ? 0 : grayedBit;
+		r = grayedBit;
 
 		imageBits[i] = b;
 		imageBits[i + 1] = g;
@@ -309,34 +294,21 @@ void CMonapuzzleView::Filtriraj(CBitmap* bmpImage, bool boja)
 	if (bmpImage->SetBitmapBits(dwCount, imageBits.data()));
 }
 
-void CMonapuzzleView::DrawWholePuzzle(CDC* pDC)
+void CIND18981View::DrawWholePuzzle(CDC* pDC)
 {
 	for (int i = 0; i < N; i++)
 	{
 		string path = "./slike/" + to_string(i + 1) + ".bmp";
-		if (i == 5)
+		if (i == 6)
 			PlacePuzzle(pDC, CString(path.c_str()), dinamoX[i], dinamoY[i], rotacije[i], miroriX[i], miroriY[i], true);
 		else
 			PlacePuzzle(pDC, CString(path.c_str()), dinamoX[i], dinamoY[i], rotacije[i], miroriX[i], miroriY[i]);
 	}
-
-	//PlacePuzzle(pDC, CString("./slike/1.bmp"), dinamoX[0], dinamoY[0], rotacije[0], miroriX[0], miroriY[0]);
-	//PlacePuzzle(pDC, CString("./slike/2.bmp"), dinamoX[1], dinamoY[1], rotacije[1], miroriX[1], miroriY[1]);
-	//PlacePuzzle(pDC, CString("./slike/3.bmp"), dinamoX[2], dinamoY[2], rotacije[2], miroriX[2], miroriY[2]);
-	//PlacePuzzle(pDC, CString("./slike/4.bmp"), dinamoX[3], dinamoY[3], rotacije[3], miroriX[3], miroriY[3]);
-	//PlacePuzzle(pDC, CString("./slike/5.bmp"), dinamoX[4], dinamoY[4], rotacije[4], miroriX[4], miroriY[4]);
-	//PlacePuzzle(pDC, CString("./slike/6.bmp"), dinamoX[5], dinamoY[5], rotacije[5], miroriX[5], miroriY[5], true);
-	//PlacePuzzle(pDC, CString("./slike/7.bmp"), dinamoX[6], dinamoY[6], rotacije[6], miroriX[6], miroriY[6]);
-	//PlacePuzzle(pDC, CString("./slike/8.bmp"), dinamoX[7], dinamoY[7], rotacije[7], miroriX[7], miroriY[7]);
-	//PlacePuzzle(pDC, CString("./slike/9.bmp"), dinamoX[8], dinamoY[8], rotacije[8], miroriX[8], miroriY[8]);
 }
 
-
-// CMonapuzzleView drawing
-
-void CMonapuzzleView::OnDraw(CDC* pDC)
+void CIND18981View::OnDraw(CDC* pDC)
 {
-	CMonapuzzleDoc* pDoc = GetDocument();
+	CIND18981Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
@@ -359,98 +331,97 @@ void CMonapuzzleView::OnDraw(CDC* pDC)
 	DrawWholePuzzle(pMemDC);
 
 	if (gridEnabled) DrawGrid(pMemDC);
-	
+
 	pMemDC->SetGraphicsMode(oldMode);
 
 	pDC->BitBlt(0, 0, clientRect.Width(), clientRect.Height(), pMemDC, 0, 0, SRCCOPY);
-	
+
 	delete pMemDC;
 }
 
 
-// CMonapuzzleView printing
+// CIND18981View printing
 
-BOOL CMonapuzzleView::OnPreparePrinting(CPrintInfo* pInfo)
+BOOL CIND18981View::OnPreparePrinting(CPrintInfo* pInfo)
 {
 	// default preparation
 	return DoPreparePrinting(pInfo);
 }
 
-void CMonapuzzleView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CIND18981View::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add extra initialization before printing
 }
 
-void CMonapuzzleView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CIND18981View::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
 	// TODO: add cleanup after printing
 }
 
 
-// CMonapuzzleView diagnostics
+// CIND18981View diagnostics
 
 #ifdef _DEBUG
-void CMonapuzzleView::AssertValid() const
+void CIND18981View::AssertValid() const
 {
 	CView::AssertValid();
 }
 
-void CMonapuzzleView::Dump(CDumpContext& dc) const
+void CIND18981View::Dump(CDumpContext& dc) const
 {
 	CView::Dump(dc);
 }
 
-CMonapuzzleDoc* CMonapuzzleView::GetDocument() const // non-debug version is inline
+CIND18981Doc* CIND18981View::GetDocument() const // non-debug version is inline
 {
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CMonapuzzleDoc)));
-	return (CMonapuzzleDoc*)m_pDocument;
+	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CIND18981Doc)));
+	return (CIND18981Doc*)m_pDocument;
 }
 #endif //_DEBUG
 
 
-// CMonapuzzleView message handlers
+// CIND18981View message handlers
 
 
-void CMonapuzzleView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CIND18981View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO: Add your message handler code here and/or call default
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
-	
 	switch (nChar)
 	{
 		// Selekcija slike
-		case '1': indeksSelekcije = 0; break;
-		case '2': indeksSelekcije = 1; break;
-		case '3': indeksSelekcije = 2; break;
-		case '4': indeksSelekcije = 3; break;
-		case '5': indeksSelekcije = 4; break;
-		case '6': indeksSelekcije = 5; break;
-		case '7': indeksSelekcije = 6; break;
-		case '8': indeksSelekcije = 7; break;
-		case '9': indeksSelekcije = 8; break;
+	case '1': indeksSelekcije = 0; break;
+	case '2': indeksSelekcije = 1; break;
+	case '3': indeksSelekcije = 2; break;
+	case '4': indeksSelekcije = 3; break;
+	case '5': indeksSelekcije = 4; break;
+	case '6': indeksSelekcije = 5; break;
+	case '7': indeksSelekcije = 6; break;
+	case '8': indeksSelekcije = 7; break;
+	case '9': indeksSelekcije = 8; break;
 
 		// Finije kontrole
-		case 'W': dinamoY[indeksSelekcije] -= 2; break;
-		case 'A': dinamoX[indeksSelekcije] -= 2; break;
-		case 'S': dinamoY[indeksSelekcije] += 2; break;
-		case 'D': dinamoX[indeksSelekcije] += 2; break;
-		case 'Q': rotacije[indeksSelekcije] -= 1; break;
-		case 'E': rotacije[indeksSelekcije] += 1; break;
-		case 'Z': miroriX[indeksSelekcije] = !miroriX[indeksSelekcije]; break;
-		case 'X': miroriY[indeksSelekcije] = !miroriY[indeksSelekcije]; break;
+	case 'W': dinamoY[indeksSelekcije] -= 2; break;
+	case 'A': dinamoX[indeksSelekcije] -= 2; break;
+	case 'S': dinamoY[indeksSelekcije] += 2; break;
+	case 'D': dinamoX[indeksSelekcije] += 2; break;
+	case 'Q': rotacije[indeksSelekcije] -= 1; break;
+	case 'E': rotacije[indeksSelekcije] += 1; break;
+	case 'Z': miroriX[indeksSelekcije] = !miroriX[indeksSelekcije]; break;
+	case 'X': miroriY[indeksSelekcije] = !miroriY[indeksSelekcije]; break;
 
 		// Grublje kontrole
-		case 'I': dinamoY[indeksSelekcije] -= 20; break;
-		case 'J': dinamoX[indeksSelekcije] -= 20; break;
-		case 'K': dinamoY[indeksSelekcije] += 20; break;
-		case 'L': dinamoX[indeksSelekcije] += 20; break;
-		case 'U': rotacije[indeksSelekcije] -= 10; break;
-		case 'O': rotacije[indeksSelekcije] += 10; break;
+	case 'I': dinamoY[indeksSelekcije] -= 20; break;
+	case 'J': dinamoX[indeksSelekcije] -= 20; break;
+	case 'K': dinamoY[indeksSelekcije] += 20; break;
+	case 'L': dinamoX[indeksSelekcije] += 20; break;
+	case 'U': rotacije[indeksSelekcije] -= 10; break;
+	case 'O': rotacije[indeksSelekcije] += 10; break;
 
 		// Save
-		case 'P': Sacuvaj(); break;
-		default: break;
+	case 'P': Sacuvaj(); break;
+	default: break;
 	}
 	Invalidate();
 }
