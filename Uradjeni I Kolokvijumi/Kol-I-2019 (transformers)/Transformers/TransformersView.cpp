@@ -27,9 +27,38 @@ using namespace std;
 
 const float PI = 3.141592653f;
 #define TO_RAD(x) { x * PI/180 }
-const int CENTERX = 30;
-const int CENTERY = 125;
 
+const int OFFSET_X = 200;
+const int OFFSET_Y = 270;
+
+const int BODY_ROT_X = 26;
+const int BODY_ROT_Y = 133;
+const int BODY_OFFSET_X = 0;
+const int BODY_OFFSET_Y = 0;
+
+const int LEG1_ROT_X = 30;
+const int LEG1_ROT_Y = 125;
+const int LEG1_SECOND_POINT_X = 237;
+const int LEG1_SECOND_POINT_Y = 125;
+const int LEG1_OFFSET_X = BODY_ROT_X - LEG1_SECOND_POINT_X + 242;
+const int LEG1_OFFSET_Y = BODY_ROT_Y - LEG1_SECOND_POINT_Y + 206;
+
+const int ARM1_ROT_X = 34;
+const int ARM1_ROT_Y = 31;
+const int ARM1_SECOND_POINT_X = 210;
+const int ARM1_SECOND_POINT_Y = 102;
+const int ARM1_OFFSET_X = 176 + BODY_OFFSET_X;
+const int ARM1_OFFSET_Y = 54 + BODY_OFFSET_Y;
+
+const int ARM2_ROT_X = 23;
+const int ARM2_ROT_Y = 61;
+const int ARM2_OFFSET_X = ARM1_SECOND_POINT_X - ARM2_ROT_X + ARM1_OFFSET_X;
+const int ARM2_OFFSET_Y = ARM1_SECOND_POINT_Y - ARM2_ROT_Y + ARM1_OFFSET_Y;
+
+const int LEG2_ROT_X = 35;
+const int LEG2_ROT_Y = 60;
+const int LEG2_OFFSET_X = 26;
+const int LEG2_OFFSET_Y = 282;
 
 // CTransformersView
 
@@ -61,15 +90,6 @@ CTransformersView::CTransformersView() noexcept
 	leg1->Load(CString("./slike/leg1.png"));
 	leg2->Load(CString("./slike/leg2.png"));
 	background->Load(CString("./slike/background.jpg"));
-
-	if (Ucitaj() == 0)
-	{
-		for (int i = 0; i < 5; i++)
-		{
-			iksovi[i] = 0;
-			ipsiloni[i] = 0;
-		}
-	}
 }
 
 CTransformersView::~CTransformersView()
@@ -85,6 +105,8 @@ BOOL CTransformersView::PreCreateWindow(CREATESTRUCT& cs)
 	return CView::PreCreateWindow(cs);
 }
 
+#pragma region Pomocne Funkcije
+
 void CTransformersView::DrawBackground(CDC* pDC, CRect rc)
 {
 	int bgWidth = background->Width();
@@ -94,7 +116,6 @@ void CTransformersView::DrawBackground(CDC* pDC, CRect rc)
 	background->Draw(pDC, pozadina, rc);
 }
 
-// Nije nam data DrawTransparent funkciju u DImage pa radimo ovako
 void CTransformersView::DrawImgTransparent(CDC* pDC, DImage* pImage)
 {
 	XFORM oldForm;
@@ -137,6 +158,21 @@ void CTransformersView::DrawImgTransparent(CDC* pDC, DImage* pImage)
 	pDC->SetWorldTransform(&oldForm);
 }
 
+void CTransformersView::DrawPoint(CDC* pDC, int x, int y)
+{
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
+
+	Translate(pDC, x, y);
+	pDC->Ellipse(-5, -5, 5, 5);
+
+	pDC->SetWorldTransform(&oldForm);
+}
+
+#pragma endregion
+
+#pragma region Funkcije Transformacije
+
 void CTransformersView::Translate(CDC* pDC, float dX, float dY, bool rightMultiply)
 {
 	XFORM xform;
@@ -165,27 +201,31 @@ void CTransformersView::Rotate(CDC* pDC, float angle, bool rightMultiply)
 	pDC->ModifyWorldTransform(&xform, rightMultiply ? MWT_RIGHTMULTIPLY : MWT_LEFTMULTIPLY);
 }
 
+#pragma endregion
+
+#pragma region Crtanje Transformersa
+
 void CTransformersView::DrawArm1(CDC* pDC)
 {
 	XFORM oldForm;
 	pDC->GetWorldTransform(&oldForm);
 
 	// Rotacija oko sebe
-	Translate(pDC, -34, -31);
+	Translate(pDC, -ARM1_ROT_X, -ARM1_ROT_Y);
 	Rotate(pDC, (arm1Angle * 2.69) + 90);
-	Translate(pDC, 34, 31);
+	Translate(pDC, ARM1_ROT_X, ARM1_ROT_Y);
 	// Pomeraj figure
-	Translate(pDC, iksovi[2], ipsiloni[2]);
+	Translate(pDC, ARM1_OFFSET_X, ARM1_OFFSET_Y);
 
-	// Ruka mora da prati rotaciju tela i da rotira oko iste tacke
-	Translate(pDC, -26 - iksovi[0], -133 - ipsiloni[0]);
+	// Rotacija oko body
+	Translate(pDC, -BODY_ROT_X - BODY_OFFSET_X, -BODY_ROT_Y - BODY_OFFSET_Y);
 	Rotate(pDC, bodyAngle);
-	Translate(pDC, 26 + iksovi[0], 133 + ipsiloni[0]);
-	
-	// Takodje telo mora da prati rotaciju oko leg1 i da rotira oko iste tacke
-	Translate(pDC, -CENTERX - iksovi[1], -CENTERY - ipsiloni[1]);
+	Translate(pDC, BODY_ROT_X + BODY_OFFSET_X, BODY_ROT_Y + BODY_OFFSET_Y);
+
+	// Rotacija oko leg1
+	Translate(pDC, -LEG1_ROT_X - LEG1_OFFSET_X, -LEG1_ROT_Y - LEG1_OFFSET_Y);
 	Rotate(pDC, arm1Angle);
-	Translate(pDC, CENTERX + iksovi[1], CENTERY + ipsiloni[1]);
+	Translate(pDC, LEG1_ROT_X + LEG1_OFFSET_X, LEG1_ROT_Y + LEG1_OFFSET_Y);
 
 	DrawImgTransparent(pDC, arm1);
 
@@ -198,26 +238,26 @@ void CTransformersView::DrawArm2(CDC* pDC)
 	pDC->GetWorldTransform(&oldForm);
 
 	// Rotacija oko sebe
-	Translate(pDC, -23, -61);
-	Rotate(pDC, arm2Angle);
-	Translate(pDC, 23, 61);
+	Translate(pDC, -ARM2_ROT_X, -ARM2_ROT_Y);
+	Rotate(pDC, arm2Angle - 90);
+	Translate(pDC, ARM2_ROT_X, ARM2_ROT_Y);
 	// Pomeraj figure
-	Translate(pDC, iksovi[3], ipsiloni[3]);
+	Translate(pDC, ARM2_OFFSET_X, ARM2_OFFSET_Y);
 
-	// Arm2 prati rotaciju arm1 i rotira oko iste tacke
-	Translate(pDC, -34 - iksovi[2], -31 - ipsiloni[2]);
-	Rotate(pDC, arm1Angle * 2.69);
-	Translate(pDC, 34 + iksovi[2], 31 + ipsiloni[2]);
+	// Rotacija oko arm1
+	Translate(pDC, -ARM1_ROT_X - ARM1_OFFSET_X, -ARM1_ROT_Y - ARM1_OFFSET_Y);
+	Rotate(pDC, (arm1Angle * 2.69) + 90);
+	Translate(pDC, ARM1_ROT_X + ARM1_OFFSET_X, ARM1_ROT_Y + ARM1_OFFSET_Y);
 
-	// Takodje rotira oko tela
-	Translate(pDC, -26 - iksovi[0], -133 - ipsiloni[0]);
+	// Rotacija oko body
+	Translate(pDC, -BODY_ROT_X - BODY_OFFSET_X, -BODY_ROT_Y - BODY_OFFSET_Y);
 	Rotate(pDC, bodyAngle);
-	Translate(pDC, 26 + iksovi[0], 133 + ipsiloni[0]);
+	Translate(pDC, BODY_ROT_X + BODY_OFFSET_X, BODY_ROT_Y + BODY_OFFSET_Y);
 
-	// I na kraju rotira oko leg1
-	Translate(pDC, -CENTERX - iksovi[1], -CENTERY - ipsiloni[1]);
+	// Rotacija oko leg1
+	Translate(pDC, -LEG1_ROT_X - LEG1_OFFSET_X, -LEG1_ROT_Y - LEG1_OFFSET_Y);
 	Rotate(pDC, arm1Angle);
-	Translate(pDC, CENTERX + iksovi[1], CENTERY + ipsiloni[1]);
+	Translate(pDC, LEG1_ROT_X + LEG1_OFFSET_X, LEG1_ROT_Y + LEG1_OFFSET_Y);
 
 	DrawImgTransparent(pDC, arm2);
 
@@ -230,11 +270,12 @@ void CTransformersView::DrawLeg1(CDC* pDC)
 	pDC->GetWorldTransform(&oldForm);
 
 	// Rotira oko sebe
-	Translate(pDC, -30, -125);
+	Translate(pDC, -LEG1_ROT_X, -LEG1_ROT_Y);
 	Rotate(pDC, arm1Angle - 100);
-	Translate(pDC, 30, 125);
+	Translate(pDC, LEG1_ROT_X, LEG1_ROT_Y);
+
 	// Pomeraj figure
-	Translate(pDC, iksovi[1], ipsiloni[1]);
+	Translate(pDC, LEG1_OFFSET_X, LEG1_OFFSET_Y);
 
 	DrawImgTransparent(pDC, leg1);
 
@@ -247,16 +288,16 @@ void CTransformersView::DrawLeg2(CDC* pDC)
 	pDC->GetWorldTransform(&oldForm);
 
 	// Rotacija oko sebe
-	Translate(pDC, -35, -60);
+	Translate(pDC, -LEG2_ROT_X, -LEG2_ROT_Y);
 	Rotate(pDC, leg2Angle + 110);
-	Translate(pDC, 35, 60);
+	Translate(pDC, LEG2_ROT_X, LEG2_ROT_Y);
 	// Pomeraj figure
-	Translate(pDC, iksovi[4], ipsiloni[4]);
+	Translate(pDC, LEG2_OFFSET_X, LEG2_OFFSET_Y);
 
-	// Leg2 mora da prati rotaciju leg1 i da rotara u istoj tacki
-	Translate(pDC, -CENTERX - iksovi[1], -CENTERY - ipsiloni[1]);
+	// Rotacija oko leg1
+	Translate(pDC, -LEG1_ROT_X - LEG1_OFFSET_X, -LEG1_ROT_Y - LEG1_OFFSET_Y);
 	Rotate(pDC, arm1Angle);
-	Translate(pDC, CENTERX + iksovi[1], CENTERY + ipsiloni[1]);
+	Translate(pDC, LEG1_ROT_X + LEG1_OFFSET_X, LEG1_ROT_Y + LEG1_OFFSET_Y);
 
 	DrawImgTransparent(pDC, leg2);
 
@@ -268,92 +309,35 @@ void CTransformersView::Body1(CDC* pDC)
 	XFORM oldForm;
 	pDC->GetWorldTransform(&oldForm);
 
-	//Rotacije oko svoje ose
-	Translate(pDC, -26, -133);
+	// Rotacije oko svoje ose
+	Translate(pDC, -BODY_ROT_X, -BODY_ROT_Y);
 	Rotate(pDC, bodyAngle);
-	Translate(pDC, 26, 133);
+	Translate(pDC, BODY_ROT_X, BODY_ROT_Y);
 	// Pomeraj figure
-	Translate(pDC, iksovi[0], ipsiloni[0]);
+	Translate(pDC, BODY_OFFSET_X, BODY_OFFSET_Y);
 
-	// Telo mora da prati rotaciju oko leg1 i da rotira zajedno s njim
-	Translate(pDC, -CENTERX - iksovi[1], -CENTERY - ipsiloni[1]);
+	// Rotacija oko leg1
+	Translate(pDC, -LEG1_ROT_X - LEG1_OFFSET_X, -LEG1_ROT_Y - LEG1_OFFSET_Y);
 	Rotate(pDC, arm1Angle);
-	Translate(pDC, CENTERX + iksovi[1], CENTERY + ipsiloni[1]);
+	Translate(pDC, LEG1_ROT_X + LEG1_OFFSET_X, LEG1_ROT_Y + LEG1_OFFSET_Y);
 
 	DrawImgTransparent(pDC, body);
 
 	pDC->SetWorldTransform(&oldForm);
 }
 
-void CTransformersView::DrawPoint(CDC* pDC, int x, int y)
-{
-	XFORM oldForm;
-	pDC->GetWorldTransform(&oldForm);
-
-	Translate(pDC, x, y);
-	pDC->Ellipse(-5, -5, 5, 5);
-
-	pDC->SetWorldTransform(&oldForm);
-}
-
 void CTransformersView::DrawTransformer(CDC* pDC)
 {
-	XFORM oldForm;
-	pDC->GetWorldTransform(&oldForm);
-
+	pDC->SetViewportOrg(OFFSET_X + kreanjeRobota, OFFSET_Y);
 	DrawArm2(pDC);
 	Body1(pDC);
 	DrawLeg2(pDC);
 	DrawLeg1(pDC);
 	DrawArm1(pDC);
-
-	pDC->SetWorldTransform(&oldForm);
+	pDC->SetViewportOrg(0, 0);
 }
 
-void CTransformersView::Upisi()
-{
-	ofstream outputFile("koordinate.txt");
-
-	if (outputFile.is_open())
-	{
-		for (int i = 0; i < 5; i++)
-		{
-			outputFile << iksovi[i] << '|'
-						<< ipsiloni[i] << endl;
-		}
-	}
-
-	outputFile.close();
-}
-
-int CTransformersView::Ucitaj()
-{
-	ifstream file("koordinate.txt");
-
-	if (!file) return 0;
-
-	string line;
-	int i = 0;
-	while (getline(file, line))
-	{
-		stringstream ss(line);
-		vector<string> values;
-		string token;
-
-		while (getline(ss, token, '|'))
-		{
-			values.push_back(token);
-		}
-
-		iksovi[i] = stoi(values[0]);
-		ipsiloni[i] = stoi(values[1]);
-
-		i++;
-	}
-
-	file.close();
-	return 1;
-}
+#pragma endregion
 
 void CTransformersView::OnDraw(CDC* pDC)
 {
@@ -372,15 +356,15 @@ void CTransformersView::OnDraw(CDC* pDC)
 	int oldMode = pMemDC->SetGraphicsMode(GM_ADVANCED);
 
 	CBitmap memBitmap;
-	memBitmap.CreateBitmap(clientRect.Width(), clientRect.Height(), 4, 8, NULL);
+	memBitmap.CreateCompatibleBitmap(pDC, clientRect.Width(), clientRect.Height());
 	CBitmap* oldBitMap = pMemDC->SelectObject(&memBitmap);
 
-	// zoves funkcije za crtanje i prosledis pMemDc njima
 	DrawBackground(pMemDC, clientRect);
-
 	DrawTransformer(pMemDC);
-	//DrawPoint(pMemDC, 34, 31);
-	//DrawPoint(pMemDC, 26, 133);
+
+	CString text;
+	text.Format(_T("arm1Angle: %f, arm2Angle: %f, lef2Angle: %f, bodyAngle: %f"), arm1Angle, arm2Angle, leg2Angle, bodyAngle);
+	pMemDC->TextOutW(0, 0, text);
 
 	pDC->BitBlt(0, 0, clientRect.Width(), clientRect.Height(), pMemDC, 0, 0, SRCCOPY);
 
@@ -435,52 +419,80 @@ CTransformersDoc* CTransformersView::GetDocument() const // non-debug version is
 
 void CTransformersView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	// TODO: Add your message handler code here and/or call default
-
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 
 	switch (nChar)
 	{
 	case 'Q': 
-		arm1Angle += 5; break;
+		if (arm1Angle < 100)
+			arm1Angle += 5; 
+		break;
 	case 'A':
-		arm1Angle -= 5; break;
+		if (arm1Angle > 0)
+			arm1Angle -= 5;
+		break;
 	case 'R':
-		leg2Angle += 5; break;
+		if (leg2Angle > -210)
+			leg2Angle += 5; 
+		break;
 	case 'F':
-		leg2Angle -= 5; break;
+		if (leg2Angle < 0)
+			leg2Angle -= 5;
+		break;
 	case 'T':
-		arm2Angle += 5; break;
+		if (arm2Angle < 280)
+			arm2Angle += 5;
+		break;
 	case 'G':
-		arm2Angle -= 5; break;
+		if (arm2Angle > 0)
+			arm2Angle -= 5; 
+		break;
 	case 'W':
-		bodyAngle += 5; break;
+		if (bodyAngle < -90)
+			bodyAngle += 5; 
+		break;
 	case 'S':
-		bodyAngle -= 5; break;
-	case 'J':
-		iksovi[indeks] -= pomeraj; break;
-	case 'L':
-		iksovi[indeks] += pomeraj; break;
-	case 'I':
-		ipsiloni[indeks] -= pomeraj; break;
-	case 'K':
-		ipsiloni[indeks] += pomeraj; break;
-	case '1':
-		indeks = 0; break;
-	case '2':
-		indeks = 1; break;
-	case '3':
-		indeks = 2; break;
-	case '4':
-		indeks = 3; break;
-	case '5':
-		indeks = 4; break;
-	case '6':
-		pomeraj = 1; break;
-	case '7':
-		pomeraj = 20; break;
-	case 'P':
-		Upisi(); break;
+		if (bodyAngle > -100)
+			bodyAngle -= 5;
+		break;
+	case VK_RIGHT:
+		if (arm1Angle < 100)
+			arm1Angle += 5;
+		if (arm2Angle < 280)
+			arm2Angle += 14;
+		if (arm2Angle > 280)
+			arm2Angle = 280;
+		if (leg2Angle > -210)
+			leg2Angle -= 11;
+		if (leg2Angle < -210)
+			leg2Angle = -210;
+		if (bodyAngle > -100)
+			bodyAngle -= 1;
+		break;
+	case VK_LEFT:
+		if (arm1Angle > 0)
+			arm1Angle -= 5;
+		if (arm2Angle > 0)
+			arm2Angle -= 14;
+		if (leg2Angle < 0)
+			leg2Angle += 11;
+		if (bodyAngle < -90)
+			bodyAngle += 1;
+		break;
+	case VK_UP:
+		if (arm1Angle == 100 &&
+			arm2Angle == 280 &&
+			leg2Angle == -210 &&
+			bodyAngle == -100)
+			kreanjeRobota += 10;
+		break;
+	case VK_DOWN:
+		if (arm1Angle == 100 &&
+			arm2Angle == 280 &&
+			leg2Angle == -210 &&
+			bodyAngle == -100)
+			kreanjeRobota -= 10;
+		break;
 	default:
 		break;
 	}

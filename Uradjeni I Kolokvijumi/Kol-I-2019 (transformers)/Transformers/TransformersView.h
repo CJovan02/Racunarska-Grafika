@@ -22,16 +22,12 @@ public:
 	DImage* leg2;
 	DImage* background;
 
-	int arm1Angle = 0;
-	int leg2Angle = 0;
-	int arm2Angle = 0;
-	int bodyAngle = -90;
-	int pomeraj = 20;
+	float arm1Angle = 0;
+	float arm2Angle = 0;
+	float leg2Angle = 0;
+	float bodyAngle = -90;
 
-	int indeks = 0;
-	int iksovi[5];
-	int ipsiloni[5];
-
+	int kreanjeRobota = 0;
 
 // Operations
 public:
