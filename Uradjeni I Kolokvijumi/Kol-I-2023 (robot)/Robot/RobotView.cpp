@@ -25,22 +25,19 @@
 const float PI = 3.14f;
 #define TO_RAD(x) { x * PI / 189 };
 
-// pozicije delova tela
-//const int POMERAJ_FIGURE_X = 0;
-//const int POMERAJ_FIGURE_Y = 0;
 const int POMERAJ_FIGURE_X = 412;
 const int POMERAJ_FIGURE_Y = 170;
-const int CENTER_X = 512;
-const int CENTER_Y = 512;
+const int CENTER_X = 512 - POMERAJ_FIGURE_X;
+const int CENTER_Y = 512 - POMERAJ_FIGURE_Y;
 const int MIRROR_POMERAJ = -210;
 
-const int POMERAJ_GLAVE_X = 55 + POMERAJ_FIGURE_X;
-const int POMERAJ_GLAVE_Y = -100 + POMERAJ_FIGURE_Y;
+const int POMERAJ_GLAVE_X = 55;
+const int POMERAJ_GLAVE_Y = -100;
 
 const int NADLAKTICA_ROTACIJA_X = 35;
 const int NADLAKTICA_ROTACIJA_Y = 35;
-const int NADLAKTICA_POMERAJ_X = 25 - 35 + POMERAJ_FIGURE_X;
-const int NADLAKTICA_POMERAJ_Y = 65 - 35 + POMERAJ_FIGURE_Y;
+const int NADLAKTICA_POMERAJ_X = 25 - 35;
+const int NADLAKTICA_POMERAJ_Y = 65 - 35;
 
 const int PODLAKTICA_ROTACIJA_X = 30;
 const int PODLAKTICA_ROTACIJA_Y = 33;
@@ -52,8 +49,8 @@ const int SAKA_ROTACIJA_Y = 3;
 const int SAKA_POMERAJ_X = 30 - 25 + PODLAKTICA_POMERAJ_X;
 const int SAKA_POMERAJ_Y = 140 - 3 + PODLAKTICA_POMERAJ_Y;
 
-const int NADKOLENICA_POMERAJ_X = 61 - 29 + POMERAJ_FIGURE_X;
-const int NADKOLENICA_POMERAJ_Y = 262 - 20 + POMERAJ_FIGURE_Y;
+const int NADKOLENICA_POMERAJ_X = 61 - 29;
+const int NADKOLENICA_POMERAJ_Y = 262 - 20;
 
 const int PODKOLENICA_POMERAJ_X = 30 - 25 + NADKOLENICA_POMERAJ_X;
 const int PODKOLENICA_POMERAJ_Y = 184 - 37 + NADKOLENICA_POMERAJ_Y;
@@ -155,7 +152,7 @@ void CRobotView::Scale(CDC* pDC, float sX, float sY, bool rightMultiply)
 
 #pragma endregion
 
-#pragma region Crtanje Robota
+#pragma region Pomocne Funkcije i pozadina
 
 void CRobotView::DrawBackground(CDC* pDC)
 {
@@ -205,15 +202,30 @@ void CRobotView::DrawImgTransparent(CDC* pDC, DImage* pImage)
 	pDC->SetWorldTransform(&oldTransform);
 }
 
-void CRobotView::DrawHalf(CDC* pDC)
+void CRobotView::DrawNode(CDC* pDC, int x, int y)
 {
 	XFORM old;
 	pDC->GetWorldTransform(&old);
 
-	int mirrorRotacijaPomeraj = mirrorBody ? MIRROR_POMERAJ : 0;
-	//Telo
+	CBrush brush(RGB(0, 0, 0));
+	CBrush* oldBrush = pDC->SelectObject(&brush);
+	Translate(pDC, x, y);
+	pDC->Ellipse(-5, -5, 5, 5);
+
+	pDC->SelectObject(oldBrush);
+	pDC->SetWorldTransform(&old);
+}
+
+#pragma endregion
+
+#pragma region Crtanje Delova Robota
+
+void CRobotView::DrawTelo(CDC* pDC)
+{
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
+
 	if (mirrorBody) Scale(pDC, -1, 1);
-	Translate(pDC, POMERAJ_FIGURE_X, POMERAJ_FIGURE_Y);
 
 	Translate(pDC, -CENTER_X, -CENTER_Y);
 	Scale(pDC, robotScale, robotScale);
@@ -221,56 +233,20 @@ void CRobotView::DrawHalf(CDC* pDC)
 	Translate(pDC, CENTER_X, CENTER_Y);
 	DrawImgTransparent(pDC, telo);
 
-	pDC->SetWorldTransform(&old);
+	pDC->SetWorldTransform(&oldForm);
+}
 
-	// Nadkolenica
-	if (mirrorBody)
-	{
-		Translate(pDC, 68, 0);
-		Scale(pDC, -1, 1);
-	}
-	Translate(pDC, NADKOLENICA_POMERAJ_X, NADKOLENICA_POMERAJ_Y);
-	Translate(pDC, -CENTER_X, -CENTER_Y);
-	Scale(pDC, robotScale, robotScale);
-	Rotate(pDC, robotAngle);
-	Translate(pDC, CENTER_X, CENTER_Y);
-	DrawImgTransparent(pDC, nadkolenica);
-	pDC->SetWorldTransform(&old);
+void CRobotView::DrawNadlaktica(CDC* pDC)
+{
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
 
-	// Podkolenica
-	if (mirrorBody)
-	{
-		Translate(pDC, 75, 0);
-		Scale(pDC, -1, 1);
-	}
-	Translate(pDC, PODKOLENICA_POMERAJ_X, PODKOLENICA_POMERAJ_Y);
-	Translate(pDC, -CENTER_X, -CENTER_Y);
-	Scale(pDC, robotScale, robotScale);
-	Rotate(pDC, robotAngle);
-	Translate(pDC, CENTER_X, CENTER_Y);
-	DrawImgTransparent(pDC, podkolenica);
-	pDC->SetWorldTransform(&old);
-
-	// Stopalo
-	if (mirrorBody)
-	{
-		Translate(pDC, 80, 0);
-		Scale(pDC, -1, 1);
-	}
-	Translate(pDC, STOPALO_POMERAJ_X, STOPALO_POMERAJ_Y);
-	Translate(pDC, -CENTER_X, -CENTER_Y);
-	Scale(pDC, robotScale, robotScale);
-	Rotate(pDC, robotAngle);
-	Translate(pDC, CENTER_X, CENTER_Y);
-	DrawImgTransparent(pDC, stopalo);
-
-	pDC->SetWorldTransform(&old);
-
+	int mirrorRotacijaPomeraj = mirrorBody ? MIRROR_POMERAJ : 0;
 	// Nadlaktica
 	Translate(pDC, -NADLAKTICA_ROTACIJA_X - mirrorRotacijaPomeraj, -NADLAKTICA_ROTACIJA_Y);
 	Rotate(pDC, nadlakticaAngle);
 	Translate(pDC, NADLAKTICA_ROTACIJA_X + mirrorRotacijaPomeraj, NADLAKTICA_ROTACIJA_Y);
-	if (mirrorBody) 
+	if (mirrorBody)
 	{
 		Translate(pDC, -15, 0);
 		Scale(pDC, -1, 1);
@@ -285,13 +261,15 @@ void CRobotView::DrawHalf(CDC* pDC)
 
 	DrawImgTransparent(pDC, nadlaktica);
 
-	// Vracamo sve transformacija na pocetak jer ne znam kako drugacije mogu da crtam
-	// sledecu figuru a da to radi kako treba.
-	// Aks je na predavanjima rekao da ovo ne sme da se radi, odnosno da se stare transformacije vracaju
-	// samo na kraju funkcije. Po toj logici bi onda trebalo da se svaki deo robota pise u zasebnoj funkciji (kao na kol-I-2019)
-	// ali u tekstu zadatka pise da se sve gura u jednu funkciju.
-	pDC->SetWorldTransform(&old);
+	pDC->SetWorldTransform(&oldForm);
+}
 
+void CRobotView::DrawPodlaktica(CDC* pDC)
+{
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
+
+	int mirrorRotacijaPomeraj = mirrorBody ? MIRROR_POMERAJ : 0;
 	//Podlaktica
 	Translate(pDC, -PODLAKTICA_ROTACIJA_X - mirrorRotacijaPomeraj, -PODLAKTICA_ROTACIJA_Y);
 	Rotate(pDC, podlakticaAngle);
@@ -304,9 +282,9 @@ void CRobotView::DrawHalf(CDC* pDC)
 	// Pomeraj
 	Translate(pDC, PODLAKTICA_POMERAJ_X, PODLAKTICA_POMERAJ_Y);
 
-	Translate(pDC, -(NADLAKTICA_ROTACIJA_X + NADLAKTICA_POMERAJ_X - mirrorRotacijaPomeraj/1.8), -(NADLAKTICA_ROTACIJA_Y + NADLAKTICA_POMERAJ_Y));
+	Translate(pDC, -(NADLAKTICA_ROTACIJA_X + NADLAKTICA_POMERAJ_X - mirrorRotacijaPomeraj / 1.8), -(NADLAKTICA_ROTACIJA_Y + NADLAKTICA_POMERAJ_Y));
 	Rotate(pDC, mirrorBody ? -nadlakticaAngle : nadlakticaAngle);
-	Translate(pDC, NADLAKTICA_ROTACIJA_X + NADLAKTICA_POMERAJ_X - mirrorRotacijaPomeraj/1.8, NADLAKTICA_ROTACIJA_Y + NADLAKTICA_POMERAJ_Y);
+	Translate(pDC, NADLAKTICA_ROTACIJA_X + NADLAKTICA_POMERAJ_X - mirrorRotacijaPomeraj / 1.8, NADLAKTICA_ROTACIJA_Y + NADLAKTICA_POMERAJ_Y);
 
 	Translate(pDC, -CENTER_X, -CENTER_Y);
 	Scale(pDC, robotScale, robotScale);
@@ -315,8 +293,15 @@ void CRobotView::DrawHalf(CDC* pDC)
 
 	DrawImgTransparent(pDC, podlaktica);
 
-	pDC->SetWorldTransform(&old);
+	pDC->SetWorldTransform(&oldForm);
+}
 
+void CRobotView::DrawSaka(CDC* pDC)
+{
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
+
+	int mirrorRotacijaPomeraj = mirrorBody ? MIRROR_POMERAJ : 0;
 	// Saka
 	Translate(pDC, -SAKA_ROTACIJA_X - mirrorRotacijaPomeraj, -SAKA_ROTACIJA_Y);
 	Rotate(pDC, sakaAngle);
@@ -341,21 +326,90 @@ void CRobotView::DrawHalf(CDC* pDC)
 
 	DrawImgTransparent(pDC, saka);
 
-	pDC->SetWorldTransform(&old);
+	pDC->SetWorldTransform(&oldForm);
 }
 
-void CRobotView::DrawNode(CDC* pDC, int x, int y)
+void CRobotView::DrawNadkolenica(CDC* pDC)
 {
-	XFORM old;
-	pDC->GetWorldTransform(&old);
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
 
-	CBrush brush(RGB(0, 0, 0));
-	CBrush* oldBrush = pDC->SelectObject(&brush);
-	Translate(pDC, x, y);
-	pDC->Ellipse(-5, -5, 5, 5);
+	int mirrorRotacijaPomeraj = mirrorBody ? MIRROR_POMERAJ : 0;
+	// Nadkolenica
+	if (mirrorBody)
+	{
+		Translate(pDC, 68, 0);
+		Scale(pDC, -1, 1);
+	}
+	Translate(pDC, NADKOLENICA_POMERAJ_X, NADKOLENICA_POMERAJ_Y);
+	Translate(pDC, -CENTER_X, -CENTER_Y);
+	Scale(pDC, robotScale, robotScale);
+	Rotate(pDC, robotAngle);
+	Translate(pDC, CENTER_X, CENTER_Y);
+	DrawImgTransparent(pDC, nadkolenica);
 
-	pDC->SelectObject(oldBrush);
-	pDC->SetWorldTransform(&old);
+	pDC->SetWorldTransform(&oldForm);
+}
+
+void CRobotView::DrawPodkolenica(CDC* pDC)
+{
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
+
+	int mirrorRotacijaPomeraj = mirrorBody ? MIRROR_POMERAJ : 0;
+	// Podkolenica
+	if (mirrorBody)
+	{
+		Translate(pDC, 75, 0);
+		Scale(pDC, -1, 1);
+	}
+	Translate(pDC, PODKOLENICA_POMERAJ_X, PODKOLENICA_POMERAJ_Y);
+	Translate(pDC, -CENTER_X, -CENTER_Y);
+	Scale(pDC, robotScale, robotScale);
+	Rotate(pDC, robotAngle);
+	Translate(pDC, CENTER_X, CENTER_Y);
+	DrawImgTransparent(pDC, podkolenica);
+
+	pDC->SetWorldTransform(&oldForm);
+}
+
+void CRobotView::DrawStopalo(CDC* pDC)
+{
+	XFORM oldForm;
+	pDC->GetWorldTransform(&oldForm);
+
+	int mirrorRotacijaPomeraj = mirrorBody ? MIRROR_POMERAJ : 0;
+	// Stopalo
+	if (mirrorBody)
+	{
+		Translate(pDC, 80, 0);
+		Scale(pDC, -1, 1);
+	}
+	Translate(pDC, STOPALO_POMERAJ_X, STOPALO_POMERAJ_Y);
+	Translate(pDC, -CENTER_X, -CENTER_Y);
+	Scale(pDC, robotScale, robotScale);
+	Rotate(pDC, robotAngle);
+	Translate(pDC, CENTER_X, CENTER_Y);
+	DrawImgTransparent(pDC, stopalo);
+
+	pDC->SetWorldTransform(&oldForm);
+}
+
+#pragma endregion
+
+#pragma region Crtanje Robota
+
+void CRobotView::DrawHalf(CDC* pDC)
+{
+	DrawTelo(pDC);
+
+	DrawNadkolenica(pDC);
+	DrawPodkolenica(pDC);
+	DrawStopalo(pDC);
+
+	DrawNadlaktica(pDC);
+	DrawPodlaktica(pDC);
+	DrawSaka(pDC);
 }
 
 void CRobotView::DrawHead(CDC* pDC)
@@ -379,6 +433,7 @@ void CRobotView::DrawRobot(CDC* pDC)
 	XFORM old;
 	pDC->GetWorldTransform(&old);
 
+	pDC->SetViewportOrg(POMERAJ_FIGURE_X, POMERAJ_FIGURE_Y);
 	DrawHead(pDC);
 	DrawHalf(pDC);
 
@@ -387,6 +442,7 @@ void CRobotView::DrawRobot(CDC* pDC)
 	DrawHalf(pDC);
 	mirrorBody = false;
 
+	pDC->SetViewportOrg(0, 0);
 	pDC->SetWorldTransform(&old);
 }
 
@@ -411,10 +467,8 @@ void CRobotView::OnDraw(CDC* pDC)
 	int oldMode = pMemDC->SetGraphicsMode(GM_ADVANCED);
 	pMemDC->FillSolidRect(clientRect, pDC->GetBkColor());
 	
-	
 	DrawBackground(pMemDC);
 	DrawRobot(pMemDC);
-
 	
 	pDC->BitBlt(0, 0, clientRect.Width(), clientRect.Height(), pMemDC, 0, 0, SRCCOPY);
 
@@ -422,7 +476,6 @@ void CRobotView::OnDraw(CDC* pDC)
 	pMemDC->SetGraphicsMode(oldMode);
 	delete pMemDC;
 }
-
 
 // CRobotView printing
 

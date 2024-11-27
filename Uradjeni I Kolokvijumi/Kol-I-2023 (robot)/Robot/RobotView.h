@@ -47,6 +47,13 @@ public:
 	void DrawImgTransparent(CDC* pDC, DImage* pImage);
 	void DrawHalf(CDC* pDC);
 	void DrawNode(CDC* pDC, int x, int y);
+	void DrawTelo(CDC* pDC);
+	void DrawNadlaktica(CDC* pDC);
+	void DrawPodlaktica(CDC* pDC);
+	void DrawSaka(CDC* pDC);
+	void DrawNadkolenica(CDC* pDC);
+	void DrawPodkolenica(CDC* pDC);
+	void DrawStopalo(CDC* pDC);
 	void DrawHead(CDC* pDC);
 	void DrawRobot(CDC* pDC);
 protected:
