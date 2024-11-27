@@ -143,10 +143,21 @@ void CLampView::Scale(CDC* pDC, float sX, float sY, bool rightMultiply)
 #pragma region Pomocne Funkcije
 void CLampView::DrawBackground(CDC* pDC)
 {
-	int h = pozadina->Height();
-	int w = pozadina->Width();
+	CRect clientRect;
+	GetClientRect(&clientRect);
 
-	pozadina->Draw(pDC, CRect(0, 0, w, h), CRect(0, 0, w, h));
+	int pozadinaW = pozadina->Width();
+	int pozadinaH = pozadina->Height();
+	
+	int clientW = clientRect.Width();
+	int clientH = clientRect.Height();
+
+	int topLeftX = (clientW - pozadinaW) / 2;
+	int topLeftY = clientH - pozadinaH;
+	int bottomRightX = topLeftX + pozadinaW;
+	int bottomRightY = topLeftY + pozadinaH;
+
+	pozadina->Draw(pDC, CRect(0, 0, pozadinaW, pozadinaH), CRect(topLeftX, topLeftY, bottomRightX, bottomRightY));
 }
 
 void CLampView::DrawImgTransparent(CDC* pDC, DImage* pImage)
@@ -197,10 +208,21 @@ void CLampView::DrawLampBase(CDC* pDC, bool blsShadow)
 
 	/*Translate(pDC, POMERAJ_LAMPE_X, POMERAJ_LAMPE_Y);*/
 
+	// Racunanje pomeraja na osnovu velicine prozora, jer se pozadina pomera na osnovu velicine prozora
+	CRect clientRect;
+	GetClientRect(&clientRect);
+	int clientW = clientRect.Width();
+	int clientH = clientRect.Height();
+	int pozadinaW = pozadina->Width();
+	int pozadinaH = pozadina->Height();
+
+	int pozadinaX = (clientW - pozadinaW) / 2;
+	int pozadinaY = clientH - pozadinaH;
+
 	// Postavljanje koordinatnog pocetka onako kako pise u zadatku, ne znam da li se radi ovako.
 	// Moze da se radi sa translate i tada kada pozicioniramo ostale delove lampe moramo da ih pomerimo za ovaj POMERAJ_LAMPE
 	// Kada pomeramo koordinatni pocetak onda ne moramo da uracunamo POMERAJ_LAMPE jer se koordinatni pocetak pomerio i ja sam samo stavio da je POMERAJ_LAMPE = 0
-	pDC->SetViewportOrg(KOORDINATNI_POCETAK_X, KOORDINATNI_POCETAK_Y);
+	pDC->SetViewportOrg(pozadinaX + KOORDINATNI_POCETAK_X, pozadinaY + KOORDINATNI_POCETAK_Y);
 	if (blsShadow)
 		DrawImgTransparent(pDC, baseShadow);
 	else
