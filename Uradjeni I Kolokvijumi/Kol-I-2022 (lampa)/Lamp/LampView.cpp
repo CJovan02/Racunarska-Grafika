@@ -246,7 +246,7 @@ void CLampView::DrawLampArm1(CDC* pDC, bool blsShadow)
 	if (blsShadow)
 	{
 		Translate(pDC, -ARM1_VECI_KRUG_X - ARM1_POMERAJ_X, -ARM1_VECI_KRUG_Y - ARM1_POMERAJ_Y);
-	Scale(pDC, 0.25, 1);
+		Scale(pDC, 0.25, 1);
 		Rotate(pDC, -90);
 		Translate(pDC, ARM1_VECI_KRUG_X + ARM1_POMERAJ_X - 130, ARM1_VECI_KRUG_Y + ARM1_POMERAJ_Y + 30);
 	}
