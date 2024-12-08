@@ -16,12 +16,15 @@ Ovo su funkcije koje se nalaze u ovom fajlu i koje se pozivaju u view.cpp funkci
 
 - ### [[PrepareScene function]]
 
+- [[DrawScene]]
 
 ## Kamera i pogled u OpenGL-u
 
 Pre crtanja necega mora da se podesi pogled, u smislu, od koje tacke *'gledamo'* nesto, gde se to *'nesto'* nalazi i koji pravac je *'gore'*.
 
 To se radi pomocu [[gluLookAt]] funkcije.
+
+### [[Rotacija kamere oko centra sa povlacenjem misa]]
 
 ## Crtanje u OpenGL-u
 
@@ -54,3 +57,8 @@ void CGLRenderer::DrawAxis(double width)
 
 [[Crtanje objekata u OpenGL-u]]
 ## [[Boilerplate kod za izradu zadataka]]
+
+## Funkcije za crtanje geometrijskih objekata
+
+Geometrijski objekti kao sto su sfera, kupa, cilindar se crtaju po nekoj odredjenoj matematickoj formuli.
+

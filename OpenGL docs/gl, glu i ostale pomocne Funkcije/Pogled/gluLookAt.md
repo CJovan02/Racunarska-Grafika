@@ -32,5 +32,7 @@ Definise tacku gde kamera gleda.
 *(upx, upy, upz)*
 
 Definise "up" vektor za kameru, odnosno definise sta predstavlja "gore" za kameru.
-Tipicno se stavlja (0, 1, 0) gde pozitivna vrednost y-se predstavlja "gore"
+Tipicno se stavlja (0, 1, 0) gde pozitivna vrednost y-se predstavlja "gore".
+
+## [[Rotacija kamere oko centra sa povlacenjem misa]]
 
