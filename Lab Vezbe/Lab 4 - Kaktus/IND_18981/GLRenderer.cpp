@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "pch.h"
 #include "GLRenderer.h"
 #include "GL\gl.h"
 #include "GL\glu.h"
@@ -21,7 +21,7 @@ CGLRenderer::CGLRenderer(void)
 	centerx = 0, centery = 0, centerz = 0;
 	upx = 0, upy = 1, upz = 0;
 
-	cactusPartAngle = 50;
+	cactusPartAngle = 0;
 
 	this->CalculatePosition();
 }
@@ -32,32 +32,32 @@ CGLRenderer::~CGLRenderer(void)
 
 bool CGLRenderer::CreateGLContext(CDC* pDC)
 {
-	PIXELFORMATDESCRIPTOR pfd ;
-   	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
-   	pfd.nSize  = sizeof(PIXELFORMATDESCRIPTOR);
-   	pfd.nVersion   = 1; 
-   	pfd.dwFlags    = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;   
-   	pfd.iPixelType = PFD_TYPE_RGBA; 
-   	pfd.cColorBits = 32;
-   	pfd.cDepthBits = 24; 
-   	pfd.iLayerType = PFD_MAIN_PLANE;
-	
+	PIXELFORMATDESCRIPTOR pfd;
+	memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+	pfd.nVersion = 1;
+	pfd.dwFlags = PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL | PFD_DRAW_TO_WINDOW;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 32;
+	pfd.cDepthBits = 24;
+	pfd.iLayerType = PFD_MAIN_PLANE;
+
 	int nPixelFormat = ChoosePixelFormat(pDC->m_hDC, &pfd);
-	
-	if (nPixelFormat == 0) return false; 
 
-	BOOL bResult = SetPixelFormat (pDC->m_hDC, nPixelFormat, &pfd);
-  	
-	if (!bResult) return false; 
+	if (nPixelFormat == 0) return false;
 
-   	m_hrc = wglCreateContext(pDC->m_hDC); 
+	BOOL bResult = SetPixelFormat(pDC->m_hDC, nPixelFormat, &pfd);
 
-	if (!m_hrc) return false; 
+	if (!bResult) return false;
 
-	return true;	
+	m_hrc = wglCreateContext(pDC->m_hDC);
+
+	if (!m_hrc) return false;
+
+	return true;
 }
 
-void CGLRenderer::PrepareScene(CDC *pDC)
+void CGLRenderer::PrepareScene(CDC* pDC)
 {
 	wglMakeCurrent(pDC->m_hDC, m_hrc);
 	{
@@ -67,7 +67,7 @@ void CGLRenderer::PrepareScene(CDC *pDC)
 	wglMakeCurrent(NULL, NULL);
 }
 
-void CGLRenderer::DrawScene(CDC *pDC)
+void CGLRenderer::DrawScene(CDC* pDC)
 {
 	wglMakeCurrent(pDC->m_hDC, m_hrc);
 	{
@@ -80,7 +80,7 @@ void CGLRenderer::DrawScene(CDC *pDC)
 			upx, upy, upz
 		);
 
-		glTranslated(0, -3, 0);
+		glTranslated(0, -5, 0);
 		DrawAxis(100);
 		DrawGrid(10, 10, 10, 10);
 		DrawFigure(cactusPartAngle);
@@ -90,7 +90,7 @@ void CGLRenderer::DrawScene(CDC *pDC)
 	wglMakeCurrent(NULL, NULL);
 }
 
-void CGLRenderer::Reshape(CDC *pDC, int w, int h)
+void CGLRenderer::Reshape(CDC* pDC, int w, int h)
 {
 	if (h == 0) h = 1;
 
@@ -106,12 +106,12 @@ void CGLRenderer::Reshape(CDC *pDC, int w, int h)
 	wglMakeCurrent(NULL, NULL);
 }
 
-void CGLRenderer::DestroyScene(CDC *pDC)
+void CGLRenderer::DestroyScene(CDC* pDC)
 {
 	wglMakeCurrent(pDC->m_hDC, m_hrc);
 	// ... 
-	wglMakeCurrent(NULL,NULL); 
-	if(m_hrc) 
+	wglMakeCurrent(NULL, NULL);
+	if (m_hrc)
 	{
 		wglDeleteContext(m_hrc);
 		m_hrc = NULL;
@@ -177,7 +177,7 @@ void CGLRenderer::DrawGrid(double width, double height, int nSegW, int nSegH)
 
 void CGLRenderer::DrawSphere(double r, int nSegAlpha, int nSegBeta)
 {
-	int alphaStep = 180 / nSegAlpha;
+	int alphaStep = 360 / nSegAlpha;
 	int betaStep = 360 / nSegBeta;
 
 	glBegin(GL_TRIANGLE_STRIP);
@@ -256,7 +256,7 @@ void CGLRenderer::DrawCylinder(double h, double r1, double r2, int nSeg)
 void CGLRenderer::DrawCone(double h, double r, int nSeg)
 {
 	int alphaStep = 360 / nSeg;
-	
+
 	// Omotac kupe
 	glBegin(GL_TRIANGLE_STRIP);
 	{
@@ -271,7 +271,7 @@ void CGLRenderer::DrawCone(double h, double r, int nSeg)
 
 		// Omotac se ne zatvori do kraja pa mozemo pocetku tacku da hardkodiramo
 		glVertex3d(r, 0, 0);  // (x = r, z = 0 at alpha = 0)
-		glVertex3d(0, h, 0); 
+		glVertex3d(0, h, 0);
 	}
 	glEnd();
 
@@ -319,19 +319,59 @@ void CGLRenderer::DrawFigure(double angle)
 		glRotated(50, 1, 0, 0);
 		glTranslated(0, sphereR, 0);
 		glColor3f(CACTUS_PART_COLOR);
+		DrawCone(vaseHeight, cactusCylinderR, nSeg);
+
+		glTranslated(0, vaseHeight + sphereR, 0);
+		glColor3f(CACTUS_SPHERE_COLOR);
+		DrawSphere(sphereR, nSegSphere, nSegSphere);
+
+		glPushMatrix();
+		{
+			glRotated(-50, 1, 0, 0);
+			glTranslated(0, sphereR, 0);
+			glColor3f(CACTUS_PART_COLOR);
+			DrawCone(vaseHeight, cactusCylinderR, nSeg);
+
+			glTranslated(0, vaseHeight + sphereR, 0);
+			glColor3f(CACTUS_SPHERE_COLOR);
+			DrawSphere(sphereR, nSegSphere, nSegSphere);
+		}
+		glPopMatrix();
+
+		glRotated(40, 1, 0, 0);
+		glTranslated(0, sphereR, 0);
+		glColor3f(CACTUS_PART_COLOR);
 		DrawCylinder(vaseHeight, cactusCylinderR, cactusCylinderR, nSeg);
 
 		glTranslated(0, vaseHeight + sphereR, 0);
 		glColor3f(CACTUS_SPHERE_COLOR);
 		DrawSphere(sphereR, nSegSphere, nSegSphere);
 
-		glTranslated(0, sphereR, 0);
-		glColor3f(CACTUS_PART_COLOR);
-		DrawCone(vaseHeight, cactusCylinderR, nSeg);
+		glPushMatrix();
+		{
+			glRotated(50, 1, 0, 0);
+			glTranslated(0, sphereR, 0);
+			glColor3f(CACTUS_PART_COLOR);
+			DrawCylinder(vaseHeight, cactusCylinderR, cactusCylinderR, nSeg);
+		
+			glTranslated(0, vaseHeight + sphereR, 0);
+			glColor3f(CACTUS_SPHERE_COLOR);
+			DrawSphere(sphereR, nSegSphere, nSegSphere);
+		}
+		glPopMatrix();
 
-		glTranslated(0, vaseHeight + sphereR, 0);
-		glColor3f(CACTUS_SPHERE_COLOR);
-		DrawSphere(sphereR, nSegSphere, nSegSphere);
+		glPushMatrix();
+		{
+			glRotated(-50, 1, 0, 0);
+			glTranslated(0, sphereR, 0);
+			glColor3f(CACTUS_PART_COLOR);
+			DrawCylinder(vaseHeight, cactusCylinderR, cactusCylinderR, nSeg);
+
+			glTranslated(0, vaseHeight + sphereR, 0);
+			glColor3f(CACTUS_SPHERE_COLOR);
+			DrawSphere(sphereR, nSegSphere, nSegSphere);
+		}
+		glPopMatrix();
 	}
 	glPopMatrix();
 
@@ -349,15 +389,7 @@ void CGLRenderer::DrawFigure(double angle)
 
 		glTranslated(0, sphereR, 0);
 		glColor3f(CACTUS_PART_COLOR);
-		DrawCone(vaseHeight, cactusCylinderR, nSeg);
-
-		glTranslated(0, vaseHeight + sphereR, 0);
-		glColor3f(CACTUS_SPHERE_COLOR);
-		DrawSphere(sphereR, nSegSphere, nSegSphere);
-
-		glTranslated(0, sphereR, 0);
-		glColor3f(CACTUS_PART_COLOR);
-		DrawCone(vaseHeight, cactusCylinderR, nSeg);
+		DrawCylinder(vaseHeight, cactusCylinderR, cactusCylinderR, nSeg);
 
 		glTranslated(0, vaseHeight + sphereR, 0);
 		glColor3f(CACTUS_SPHERE_COLOR);
@@ -373,49 +405,23 @@ void CGLRenderer::DrawFigure(double angle)
 	glColor3f(CACTUS_SPHERE_COLOR);
 	DrawSphere(sphereR, nSegSphere, nSegSphere);
 
-	// Gornja leva "ruka"
-	glPushMatrix();
-	{
-		glRotated(angle, 1, 0, 0);
-		glTranslated(0, sphereR, 0);
-		glColor3f(CACTUS_ROTATE_PART_COLOR);
-		DrawCylinder(vaseHeight, cactusCylinderR, cactusCylinderR, nSeg);
+	// Zadnji deo oko koga se rotira
+	glRotated(angle, 1, 0, 0);
+	glTranslated(0, sphereR, 0);
+	glColor3f(CACTUS_ROTATE_PART_COLOR);
+	DrawCone(vaseHeight, cactusCylinderR, nSeg);
 
-		glTranslated(0, vaseHeight + sphereR, 0);
-		glColor3f(CACTUS_SPHERE_COLOR);
-		DrawSphere(sphereR, nSegSphere, nSegSphere);
+	glTranslated(0, vaseHeight + sphereR, 0);
+	glColor3f(CACTUS_SPHERE_COLOR);
+	DrawSphere(sphereR, nSegSphere, nSegSphere);
 
-		glTranslated(0, sphereR, 0);
-		glColor3f(CACTUS_PART_COLOR);
-		DrawCone(vaseHeight, cactusCylinderR, nSeg);
+	glTranslated(0, sphereR, 0);
+	glColor3f(CACTUS_PART_COLOR);
+	DrawCone(vaseHeight, cactusCylinderR, nSeg);
 
-		glTranslated(0, vaseHeight + sphereR, 0);
-		glColor3f(CACTUS_SPHERE_COLOR);
-		DrawSphere(sphereR, nSegSphere, nSegSphere);
-	}
-	glPopMatrix();
-
-	// Gornja desna "ruka"
-	glPushMatrix();
-	{
-		glRotated(-50, 1, 0, 0);
-		glTranslated(0, sphereR, 0);
-		glColor3f(CACTUS_PART_COLOR);
-		DrawCylinder(vaseHeight, cactusCylinderR, cactusCylinderR, nSeg);
-
-		glTranslated(0, vaseHeight + sphereR, 0);
-		glColor3f(CACTUS_SPHERE_COLOR);
-		DrawSphere(sphereR, nSegSphere, nSegSphere);
-
-		glTranslated(0, sphereR, 0);
-		glColor3f(CACTUS_PART_COLOR);
-		DrawCylinder(vaseHeight, cactusCylinderR, cactusCylinderR, nSeg);
-
-		glTranslated(0, vaseHeight + sphereR, 0);
-		glColor3f(CACTUS_SPHERE_COLOR);
-		DrawSphere(sphereR, nSegSphere, nSegSphere);
-	}
-	glPopMatrix();
+	glTranslated(0, vaseHeight + sphereR, 0);
+	glColor3f(CACTUS_SPHERE_COLOR);
+	DrawSphere(sphereR, nSegSphere, nSegSphere);
 }
 
 #pragma endregion
