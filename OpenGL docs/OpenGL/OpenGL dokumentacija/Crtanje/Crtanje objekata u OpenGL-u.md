@@ -5,6 +5,7 @@ Za crtanje se primarno koriste dve funkcije:
 
 Moze da se specificira i boja pri crtanju pozivom [[glColor]] pre crtanja figure.
 
+Takodje gasimo teksture pre crtanja linija, [[glDisable]]
 Primer crtanja linija oko koordinatnog pocetka:
 ```c++
 void CGLRenderer::DrawAxes() 

@@ -46,8 +46,6 @@ BOOL CGLKView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	Invalidate();
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
-
-	return CView::OnMouseWheel(nFlags, zDelta, pt);
 }
 ```
 
@@ -107,7 +105,7 @@ void CGLRenderer::RotateView(double dXY, double dXZ)
 }
 ```
 
-Ovo je formula za crtanje sfere, formula je data na CS-u. Putanja po kojoj se kamera rotira oko neke tacke je zapravo sfera.
+Ovo je formula za crtanje sfere, formula je data na CS-u. Putanja po kojoj se kamera rotira oko neke tacke je zapravo sfera. ([[Crtanje Sfere]])
 ```c++
 void CGLRenderer::CalculatePosition()
 {

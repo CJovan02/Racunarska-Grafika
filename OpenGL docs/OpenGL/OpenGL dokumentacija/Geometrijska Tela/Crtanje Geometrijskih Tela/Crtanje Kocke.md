@@ -48,7 +48,7 @@ void CGLRenderer::DrawCube(double a)
 }
 ```
 
-- Koriscenjem funkcija transformacije: napravimo funkciju koja crta jednu stranu kocke. Zatim u glavnoj funkciji crtanu svaki stranu i koriscenjem transformacija ([[Transformacije u OpenGL-u]]) pomeramo i rotiramo stranu.
+- Koriscenjem funkcija transformacije: napravimo funkciju koja crta jednu stranu kocke. Zatim u glavnoj funkciji crtamo svaku stranu i koriscenjem transformacija ([[Transformacije u OpenGL-u]]) pomeramo i rotiramo stranu.
 ```c++
 void CGLRenderer::DrawCube(double a)
 {
@@ -123,4 +123,5 @@ void CGLRenderer::DrawCubeFace(double a)
 }
 ```
 ### NAPOMENA
-Uglovi rotaciju u gornjem primeru su takvi zbog normala kocke. Za vise informacija: [[Normale kocke]]
+Uglovi rotacije u gornjem primeru su takvi zbog normala kocke. 
+Za vise informacija: [[Normale kocke]]

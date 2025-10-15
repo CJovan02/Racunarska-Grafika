@@ -10,7 +10,7 @@
 
 using namespace std;
 
-#define RAD(a) 3.141592*(a)/180
+#define RAD(a) 3.141592*(a)/180 
 
 #define TO_RAD(x) ( x * 3.14159 / 180 )
 

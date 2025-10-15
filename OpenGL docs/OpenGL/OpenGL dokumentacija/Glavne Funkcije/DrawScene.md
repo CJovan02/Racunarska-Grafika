@@ -18,9 +18,9 @@ void CGLRenderer::DrawScene(CDC *pDC)
 				  GLdouble upx, GLdouble upy, GLdouble upz);
 
 		
-	}
 	glFlush();
     SwapBuffers(pDC->m_hDC);
+    }
     wglMakeCurrent(NULL, NULL);
 }
 

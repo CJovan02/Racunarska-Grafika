@@ -18,3 +18,5 @@ U tom fajlu se nalaze funkcije za crtanje u OpenGL-u. Taj fajl izgleda dosta sli
 ## [[Transformacije u OpenGL-u]]
 
 ## [[Osvetljenje u OpenGL-u]]
+
+## [[Teksture u OpenGL-u]]

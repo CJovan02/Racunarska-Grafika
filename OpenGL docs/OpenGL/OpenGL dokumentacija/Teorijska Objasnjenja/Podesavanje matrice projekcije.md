@@ -30,8 +30,8 @@ gluPerspective(45.0, (double)w / h, 1.0, 100.0);
 Parametri:
 - *FOV - Field of View*: ovde je stavljeno 45, ova brojka se daje u zadatku
 - *Aspect Ratio:* width-to-height ratio viewport-a, znaci **w / h**
-- *Near Clilpping Plane:* Minimalna distanca od kamere gde se objekti renderuju, mislim da se ovde uvek stavlja *1*
-- *Far Clipping Plane:* Maksimalna distanca od kamere gde se objekti renderuju, mislim da se ovde uvak stavlja *100*
+- *Near Clilpping Plane:* Minimalna distanca od kamere gde se objekti renderuju, mislim da se ovde uvek stavlja *1*, (na kolokvijumu sam video da je stavljeno 0.1)
+- *Far Clipping Plane:* Maksimalna distanca od kamere gde se objekti renderuju, mislim da se ovde uvak stavlja *100*, (na kolokvijumu sam video da je stavljeno na 2000)
 
 ![[viewing-frustim.jpg]]
 Na kraju se formira **viewing frustum**.
@@ -44,8 +44,7 @@ glLoadIdentity();
 ```
 Nakon konfiguracije matrice projekcije moramo da se vradimo u default-nu **model-view matricu**.
 Ova matrica konfigurise transformacije (translate, scale, rotate)
-
-
+Na jednom uradjenom kolokvijumu sam video da su izostavili *glLoadIdentitiy()* nakon vracanja moda matrica.
 
 ## Opciono: Podesavanje orthographic perspektive radi testiranja
 

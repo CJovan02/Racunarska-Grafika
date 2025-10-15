@@ -17,7 +17,7 @@ void CGLRenderer::DrawCone(double h, double r, int nSeg)
 			glVertex3d(0, h, 0);
 		}
 
-		// Omotac se ne zatvori do kraja pa mozemo pocetku tacku da hardkodiramo
+		// Omotac se ne zatvori do kraja pa mozemo pocetnu tacku da hardkodiramo
 		glVertex3d(r, 0, 0);  // (x = r, z = 0 at alpha = 0)
 		glVertex3d(0, h, 0); 
 	}

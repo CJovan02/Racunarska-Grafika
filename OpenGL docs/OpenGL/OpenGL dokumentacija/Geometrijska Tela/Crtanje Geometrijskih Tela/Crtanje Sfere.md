@@ -3,9 +3,11 @@
 
 Imamo dva nacina da crtamo sferu, mrzi me da objasnjvam vidi se slike o cemu se radi.
 
-**Napomena: ovde se koristi GL_LINES kako bi se bolje videlo o cemu se radi. Kada se iskoristi GL_TRIANGLE_STRIP povrsina sfere se popuni. Moze da se koristi GL_QUAD_STRIP ali je sa trouglom efikasnije.**
+**Napomena: ovde se koristi GL_LINES kako bi se bolje videle linije, radi demonstracije.
+Kada se iskoristi GL_TRIANGLE_STRIP povrsina sfere se popuni. Moze da se koristi GL_QUAD_STRIP ali je sa trouglom efikasnije.**
 
-## Crtanje sfere po horizintali
+## Crtanje sfere po horizintali (latitude)
+
 ```c++
 void CGLRenderer::DrawSphere(double r, int nSegAlpha, int nSegBeta)
 {
@@ -24,9 +26,11 @@ void CGLRenderer::DrawSphere(double r, int nSegAlpha, int nSegBeta)
 				double y = r * sin(TO_RAD(alpha));
 				double z = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta));
 
-				double x2 = r * cos(TO_RAD(alpha)) * cos(TO_RAD(beta) + TO_RAD(betaStep));
+				double x2 = r * cos(TO_RAD(alpha)) * cos(TO_RAD(beta) + 
+				   TO_RAD(betaStep));
 				double y2 = r * sin(TO_RAD(alpha));
-				double z2 = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta) + TO_RAD(betaStep));
+				double z2 = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta) + 
+				   TO_RAD(betaStep));
 
 				glVertex3d(x, y, z);
 				glVertex3d(x2, y2, z2);
@@ -37,9 +41,11 @@ void CGLRenderer::DrawSphere(double r, int nSegAlpha, int nSegBeta)
 }
 ```
 
+Po horizontali se uzme sledeca tacka kada se poveca **beta ugao.**
+
 ![[Sfera horizontalno.png]]
 
-## Crtanje sfere po vertikali
+## Crtanje sfere po vertikali (longitude)
 
 ```c++
 void CGLRenderer::DrawSphere(double r, int nSegAlpha, int nSegBeta)
@@ -60,9 +66,11 @@ void CGLRenderer::DrawSphere(double r, int nSegAlpha, int nSegBeta)
 				double y = r * sin(TO_RAD(alpha));
 				double z = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta));
 
-				double x2 = r * cos(TO_RAD(alpha) + TO_RAD(alphaStep)) * cos(TO_RAD(beta));
+				double x2 = r * cos(TO_RAD(alpha) + TO_RAD(alphaStep)) * 
+				   cos(TO_RAD(beta));
 				double y2 = r * sin(TO_RAD(alpha) + TO_RAD(alphaStep));
-				double z2 = r * cos(TO_RAD(alpha) + TO_RAD(alphaStep)) * sin(TO_RAD(beta));
+				double z2 = r * cos(TO_RAD(alpha) + TO_RAD(alphaStep)) * 
+				   sin(TO_RAD(beta));
 
 				glVertex3d(x, y, z);
 				glVertex3d(x2, y2, z2);
@@ -72,6 +80,8 @@ void CGLRenderer::DrawSphere(double r, int nSegAlpha, int nSegBeta)
 	glEnd();
 }
 ```
+
+Po vertikali se uzme sledeca tacka kada se poveca **alpha ugao.**
 
 ![[Sfera vertikanlno.png]]
 
