@@ -1,3 +1,15 @@
+## Planarno mapiranje
+
+#### Objasnjenje planarnog mapiranja - [[Planarno (projekciono) mapiranje]]
+
+#### Objasnjenje polarnog mapiranja - [[Sferno (polarno) mapiranje]]
+
+
+
+Koristi se **planarno mapiranje** (maltene projekcija na neku ravan da bi se dobile teksturne koordinate) da se mapira baza kupe.
+
+Za omotac se isto koristi planarano, ali moze ja mislim da za omotac moze i polarno mapiranje da se koristi ([[Lepljenje teksture na sferu]] - ima primer polarnog mapiranja)
+
 Ovo je slika koja se sastoji od 3 teksture. Mi moramo da "odsecemo" jedan deo slike i da ga zalepimo na neko geometrijsko telo.
 
 ![[Pauk tekstura.png]]
@@ -9,47 +21,55 @@ Ovo je slika koja se sastoji od 3 teksture. Mi moramo da "odsecemo" jedan deo sl
 
 ![[Lepljenje teksture na kupu.png]]
 
-[[Crtanje Sfere]]
-
+[[Crtanje Kupe]]
 ```c++
-void CGLRenderer::DrawSphere(double r, int nSeg, double texU, double texV, double texR)
+void CGLRenderer::DrawCone(double r, double h, int nSeg, double texU, double texV, double texR)
 {
-	// Longituda
-	int alphaStep = 180 / (nSeg * 2);
-	// Latituda
-	int betaStep = 360 / nSeg;
+	double alphaStep = 2 * PI / nSeg;
 
 	glColor3d(1, 1, 1);
-	//glEnable(GL_TEXTURE_2D);
-	//glBindTexture(GL_TEXTURE_2D, m_texSpider);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_texSpider);
+
+	// Omotac
 	glBegin(GL_TRIANGLE_STRIP);
 	{
-		for (int beta = 0; beta <= 360; beta += betaStep)
+		for (int i = 0; i <= nSeg; i++)
 		{
-			for (int alpha = -90; alpha <= 90; alpha += alphaStep)
-			{
-				double x1 = r * cos(TO_RAD(alpha)) * cos(TO_RAD(beta));
-				double y1 = r * sin(TO_RAD(alpha));
-				double z1 = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta));
+			double alpha = alphaStep * i;
+		
+			double x = r * cos(alpha);
+			double z = r * sin(alpha);
 
-				int beta2 = beta + betaStep;
-				double x2 = r * cos(TO_RAD(alpha)) * cos(TO_RAD(beta2));
-				double y2 = r * sin(TO_RAD(alpha));
-				double z2 = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta2));
 
-				// Lepljenje teksture preko sfere
-				double tx1 = texR * x1 / r + texU;
-				double ty1 = texR * z1 / r + texV;
+			double tx = x / r * texR + texU;
+			double ty = z / r * texR + texV;
 
-				double tx2 = texR * x2 / r + texU;
-				double ty2 = texR * z2 / r + texV;
+			glTexCoord2d(tx, ty);
+			glVertex3d(x, 0, z);
 
-				glTexCoord2f(tx1, ty1);
-				glVertex3d(x1, y1, z1);
+			glTexCoord2d(texU, texV);
+			glVertex3d(0, h, 0);
+		}
+	}
+	glEnd();
+	
+	// Baza
+	glBegin(GL_TRIANGLE_FAN);
+	{
+		glTexCoord2d(texU, texV);
+		glVertex3d(0, 0, 0);
+		for (int i = 0; i <= nSeg; i++)
+		{
+			double alpha = alphaStep * i;
+			double x = r * cos(alpha);
+			double z = r * sin(alpha);
 
-				glTexCoord2f(tx2, ty2);
-				glVertex3d(x2, y2, z2);
-			}
+			double tx = x / r * texR + texU;
+			double ty = z / r * texR + texV;
+
+			glTexCoord2d(tx, ty);
+			glVertex3d(x, 0, z);
 		}
 	}
 	glEnd();

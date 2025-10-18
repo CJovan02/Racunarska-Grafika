@@ -11,6 +11,6 @@ To znaci da funkcije transformacije kao sto su na primer *glRotate* **menjaju ve
 
 Za 3D objekte koje smo crtali ([[Crtanje geometrijskih tela]]) pre toga postoje vec unapred definisane formule za odredjivanje normale tih objekata.
 
-[[Izracunavanje normala kod geometrijskih tela]]
+[[Izracunavanje normala g. tela]]
 
 [[Crtanje vektora normale]]

@@ -68,6 +68,8 @@ Znaci ako pozovemo *glGenTextures(1, &texID)* znaci da ce generisati *1* ID i sm
 
 ## Koriscenje tekstura
 
+[[Teksturne koordinate]]
+
 Pre koriscenja tekstura moramo da, za svaku teskturu, pozovemo *LoadTexture* i da zapamtimo njen ID. To pisemo u prepare scene.
 
 ```c++
@@ -154,5 +156,11 @@ void CGLRenderer::DestroyScene(CDC *pDC)
 
 Ovo je jako prost primer za lepnjenje teksture na kocki, malo je komplikovanije za druga geometrijska tela.
 
+Takodje dosta zavisi od zadatka kako se trazi da se tekstura zalepi, sa ova tri primera ispod bi trebalo vecina slucajeva da se pokrije.
+
+### [[Lepljenje teksture na env cube]]
 ### [[Lepljenje teksture na sferu]]
 ### [[Lepljenje teksture na kupu]]
+### [[Lepljenje teksture na cilindar]]
+
+Na jednom kolokvijumu se trazilo da se izracuna jedinicni vektor izmedju dve tacke: [[CalcRotAxis]]

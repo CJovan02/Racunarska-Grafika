@@ -10,12 +10,16 @@ void CGLRenderer::DrawScene(CDC *pDC)
 {
     wglMakeCurrent(pDC->m_hDC, m_hrc);
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | 
+		GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 
-		gluLookAt(GLdouble eyex, GLdouble eyey, GLdouble eyez,
-				  GLdouble centerx, GLdouble centery, GLdouble centerz,
-				  GLdouble upx, GLdouble upy, GLdouble upz);
+		gluLookAt(GLdouble eyex, GLdouble eyey, 
+		GLdouble eyez,
+				  GLdouble centerx, GLdouble centery,
+				   GLdouble centerz,
+				  GLdouble upx, GLdouble upy, GLdouble
+				   upz);
 
 		
 	glFlush();

@@ -3,13 +3,13 @@
 ```c++
 void CGLRenderer::DrawCone(double h, double r, int nSeg)
 {
-	int alphaStep = 360 / nSeg;
-	
 	// Omotac kupe
 	glBegin(GL_TRIANGLE_STRIP);
 	{
-		for (int alpha = 0; alpha <= 360; alpha += alphaStep)
+		for (int i = 0; i <= nSeg; i ++)
 		{
+			double alpha = (double) 360 / nSeg * i;
+			
 			double x = r * cos(TO_RAD(alpha));
 			double z = r * sin(TO_RAD(alpha));
 
@@ -28,8 +28,10 @@ void CGLRenderer::DrawCone(double h, double r, int nSeg)
 	{
 		glVertex3d(0, 0, 0);
 
-		for (int alpha = 0; alpha <= 360; alpha += alphaStep)
+		for (int i = 0; i <= nSeg; i ++)
 		{
+			double alpha = (double) 360 / nSeg * i;
+			
 			double x = r * cos(TO_RAD(alpha));
 			double z = r * sin(TO_RAD(alpha));
 			glVertex3d(x, 0, z);
