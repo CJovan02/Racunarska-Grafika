@@ -30,6 +30,11 @@ BEGIN_MESSAGE_MAP(CGLKView, CView)
 	ON_WM_SIZE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
+	ON_WM_KEYDOWN()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 // CGLKView construction/destruction
@@ -154,4 +159,72 @@ void CGLKView::OnInitialUpdate()
 	CDC* pDC = GetDC();
 	m_glRenderer.PrepareScene(pDC);
 	ReleaseDC(pDC);
+}
+
+void CGLKView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	switch (nChar)
+	{
+		case VK_RIGHT:
+			m_glRenderer.RotateCamera(-5, 0);
+			break;
+		case VK_LEFT:
+			m_glRenderer.RotateCamera(5, 0);
+			break;
+		case VK_UP:
+			m_glRenderer.RotateCamera(0, 5);
+			break;
+		case VK_DOWN:
+			m_glRenderer.RotateCamera(0, -5);
+			break;
+		case 'A':
+			m_glRenderer.ZoomView(true);
+			break;
+		case 'S':
+			m_glRenderer.ZoomView(false);
+			break;
+	}
+	Invalidate();
+
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CGLKView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	m_dragging = true;
+	m_lastPos = point;
+
+	CView::OnLButtonDown(nFlags, point);
+}
+
+void CGLKView::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	m_dragging = false;
+
+	CView::OnLButtonUp(nFlags, point);
+}
+
+void CGLKView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (m_dragging)
+	{
+		double dX = point.x - m_lastPos.x;
+		double dY = point.y - m_lastPos.y;
+
+		double sens = 1.0 / 5.0;
+
+		m_glRenderer.RotateCamera(dX * sens, dY * sens);
+	}
+	m_lastPos = point;
+	Invalidate();
+
+	CView::OnMouseMove(nFlags, point);
+}
+
+BOOL CGLKView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	m_glRenderer.ZoomView(zDelta > 0);
+	Invalidate();
+
+	return CView::OnMouseWheel(nFlags, zDelta, pt);
 }

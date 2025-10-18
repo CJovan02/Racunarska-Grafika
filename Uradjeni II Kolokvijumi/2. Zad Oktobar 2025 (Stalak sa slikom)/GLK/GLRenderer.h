@@ -21,7 +21,7 @@ protected:
 	HGLRC	 m_hrc; //OpenGL Rendering Context 
 
 	double viewR = 10, eyex = 10, eyey = 10, eyez = 10;
-	double centerx = 0, centery = 0, centerz = 0;
 
+	double centerx = 0, centery = 0, centerz = 0;
 	double viewAngleXZ = 0, viewAngleXY = 0;
 };

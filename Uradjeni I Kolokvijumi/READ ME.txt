@@ -1,0 +1,5 @@
+Ja sam sve ove zadatke radio koristici mnozenje matrice sa desne strane.
+
+Mislim da je lakse da se koristi mnozenje matrice sa leve strane i da se koristi razmisljanje da transformacije pomeraju lokali koordinati sistem (prezentacija "RG-V05 (GDI - Transformacije) 2023" sa cs-a za vise info).
+
+I kolokvijum 2024 mislim da ne moze da se lako uradi koristeci mnozenje sa desne strane.
