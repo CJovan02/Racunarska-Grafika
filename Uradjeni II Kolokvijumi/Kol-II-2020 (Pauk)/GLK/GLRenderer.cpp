@@ -276,27 +276,31 @@ void CGLRenderer::DrawCubeFace(double a, UINT texID)
 void CGLRenderer::DrawSphere(double r, int nSeg, double texU, double texV, double texR)
 {
 	// Longituda
-	int alphaStep = 180 / (nSeg * 2);
+	double alphaStep = PI / (double)(nSeg * 2);
 	// Latituda
-	int betaStep = 360 / nSeg;
+	double betaStep = 2 * PI / (double)nSeg;
 
 	glColor3d(1, 1, 1);
 	//glEnable(GL_TEXTURE_2D);
 	//glBindTexture(GL_TEXTURE_2D, m_texSpider);
 	glBegin(GL_TRIANGLE_STRIP);
 	{
-		for (int beta = 0; beta <= 360; beta += betaStep)
+		for (int i = 0; i < nSeg; i++)
 		{
-			for (int alpha = -90; alpha <= 90; alpha += alphaStep)
-			{
-				double x1 = r * cos(TO_RAD(alpha)) * cos(TO_RAD(beta));
-				double y1 = r * sin(TO_RAD(alpha));
-				double z1 = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta));
+			double beta = betaStep * i;
 
-				int beta2 = beta + betaStep;
-				double x2 = r * cos(TO_RAD(alpha)) * cos(TO_RAD(beta2));
-				double y2 = r * sin(TO_RAD(alpha));
-				double z2 = r * cos(TO_RAD(alpha)) * sin(TO_RAD(beta2));
+			for (int j = 0; j <= nSeg * 2; j++)
+			{
+				double alpha = (alphaStep * j) - PI / 2;
+
+				double x1 = r * cos(alpha) * cos(beta);
+				double y1 = r * sin(alpha);
+				double z1 = r * cos(alpha) * sin(beta);
+
+				double beta2 = beta + betaStep;
+				double x2 = r * cos(alpha) * cos(beta2);
+				double y2 = r * sin(alpha);
+				double z2 = r * cos(alpha) * sin(beta2);
 
 				// Lepljenje teksture preko sfere
 				double tx1 = texR * x1 / r + texU;
@@ -318,19 +322,21 @@ void CGLRenderer::DrawSphere(double r, int nSeg, double texU, double texV, doubl
 
 void CGLRenderer::DrawCone(double r, double h, int nSeg, double texU, double texV, double texR)
 {
-	int alphaStep = 360 / nSeg;
+	double alphaStep = 2 * PI / nSeg;
 
 	glColor3d(1, 1, 1);
-	//glEnable(GL_TEXTURE_2D);
-	//glBindTexture(GL_TEXTURE_2D, m_texSpider);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_texSpider);
 
 	// Omotac
 	glBegin(GL_TRIANGLE_STRIP);
 	{
-		for (int alpha = 0; alpha <= 360; alpha += alphaStep)
+		for (int i = 0; i <= nSeg; i++)
 		{
-			double x = r * cos(TO_RAD(alpha));
-			double z = r * sin(TO_RAD(alpha));
+			double alpha = alphaStep * i;
+
+			double x = r * cos(alpha);
+			double z = r * sin(alpha);
 
 
 			double tx = x / r * texR + texU;
@@ -344,16 +350,17 @@ void CGLRenderer::DrawCone(double r, double h, int nSeg, double texU, double tex
 		}
 	}
 	glEnd();
-	
+
 	// Baza
 	glBegin(GL_TRIANGLE_FAN);
 	{
 		glTexCoord2d(texU, texV);
 		glVertex3d(0, 0, 0);
-		for (int alpha = 0; alpha <= 360; alpha += alphaStep)
+		for (int i = 0; i <= nSeg; i++)
 		{
-			double x = r * cos(TO_RAD(alpha));
-			double z = r * sin(TO_RAD(alpha));
+			double alpha = alphaStep * i;
+			double x = r * cos(alpha);
+			double z = r * sin(alpha);
 
 			double tx = x / r * texR + texU;
 			double ty = z / r * texR + texV;
