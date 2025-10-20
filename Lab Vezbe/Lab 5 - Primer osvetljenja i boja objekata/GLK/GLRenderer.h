@@ -45,7 +45,7 @@ public:
 
 	void DrawCubeFace(double a);
 
-	tuple<double, double> CalculateCylinderNormals(double h, double r1, double r2);
+	void CalculateConeNormals(double h, double rBot, double rTop, double alphaRad, double& nx, double& ny, double& nz);
 
 	void RotateView(double dXY, double dXZ);
 

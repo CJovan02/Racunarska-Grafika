@@ -1,4 +1,4 @@
-
+﻿
 // GLKView.cpp : implementation of the CGLKView class
 //
 
@@ -31,6 +31,7 @@ BEGIN_MESSAGE_MAP(CGLKView, CView)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_KEYDOWN()
+//	ON_WM_KEYUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
@@ -165,65 +166,24 @@ void CGLKView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	switch (nChar)
 	{
-		case VK_RIGHT:
-			m_glRenderer.RotateCamera(-5, 0);
-			break;
-		case VK_LEFT:
-			m_glRenderer.RotateCamera(5, 0);
-			break;
-		case VK_UP:
-			m_glRenderer.RotateCamera(0, 5);
-			break;
-		case VK_DOWN:
-			m_glRenderer.RotateCamera(0, -5);
-			break;
-		case 'A':
-			m_glRenderer.ZoomView(true);
-			break;
-		case 'S':
-			m_glRenderer.ZoomView(false);
-			break;
-		case 'T':
-			//if (m_glRenderer.alpha <= 0) break;
-
-			m_glRenderer.alpha -= 5;
-			break;
-		case 'Y':
-			//if (m_glRenderer.alpha >= 30) break;
-
-			m_glRenderer.alpha += 5;
-			break;
-		case 'Q':
-			if (m_glRenderer.gama <= 0) break;
-
-			m_glRenderer.gama -= 5;
-			break;
-		case 'W':
-			if (m_glRenderer.gama >= 30) break;
-
-			m_glRenderer.gama += 5;
-			break;
-		case 'E':
-			if (m_glRenderer.beta <= -30) break;
-
-			m_glRenderer.beta -= 5;
-			break;
-		case 'R':
-			if (m_glRenderer.beta >= 30) break;
-
-			m_glRenderer.beta += 5;
-			break;
-		case 'U':
-			if (m_glRenderer.slide <= -0.1) break;
-
-			m_glRenderer.slide -= 0.05;
-			break;
-		case 'I':
-			if (m_glRenderer.slide >= 0.4) break;
-
-			m_glRenderer.slide += 0.05;
-			break;
-
+	case VK_RIGHT:
+		m_glRenderer.RotateCamera(-5, 0);
+		break;
+	case VK_LEFT:
+		m_glRenderer.RotateCamera(5, 0);
+		break;
+	case VK_UP:
+		m_glRenderer.RotateCamera(0, 5);
+		break;
+	case VK_DOWN:
+		m_glRenderer.RotateCamera(0, -5);
+		break;
+	case 'A':
+		m_glRenderer.ZoomView(true);
+		break;
+	case 'S':
+		m_glRenderer.ZoomView(false);
+		break;
 	}
 	Invalidate();
 
@@ -269,3 +229,4 @@ BOOL CGLKView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
 }
+

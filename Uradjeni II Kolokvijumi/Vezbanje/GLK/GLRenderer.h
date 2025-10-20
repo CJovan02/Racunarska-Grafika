@@ -15,19 +15,34 @@ public:
 	UINT LoadTexture(char* fileName);
 
 	void SetLightningParams();
+
 	void SetLightParams(int glLight);
+
 	void SetMaterial(float diffuse[]);
 
+	void DrawAxes();
+
+	void PolarToCartesian(double R, double phi, double theta, double& x, double& y, double& z);
+
+	void DrawSphere(double r, int n, int m);
+
+	void DrawCylinder(double r1, double r2, double h, int nSeg);
+
+	void DrawCone(double r, double h, int nSeg);
+
 	void DrawCubeFace(double a);
+
+	void DrawCubeFaceGrid(double a, int n);
+
 	void DrawCube(double a);
 
-	void DrawLampHead(float w, float h, float n);
-	void DrawLampBody(float w, float h, int n, float alpha);
+	void DrawCubeGrid(double a, int n);
 
-	void DrawPaintEastel(float w, float h, int n, float slide, float alpha, float beta, float gama);
-	void DrawPrism(float a, float b, float c, int n, bool drawRight, bool topTexture = false);
 	void DrawRect(float a, float b, int n);
-	void DrawAxes();
+
+	void DrawPrism(float a, float b, float c, int n);
+
+	void CalculateConeNormals(double h, double rBot, double rTop, double alphaRad, double& nx, double& ny, double& nz);
 
 	void RotateCamera(double dX, double dY);
 	void ZoomView(bool zoomIn);
@@ -36,13 +51,10 @@ public:
 protected:
 	HGLRC	 m_hrc; //OpenGL Rendering Context 
 
-	double viewR = 10, eyex = 10, eyey = 10, eyez = 10;
-
+	double viewAngleXY = 0, viewAngleXZ = 0, viewR = 10;
+	double eyex = 10, eyey = 10, eyez = 10;
 	double centerx = 0, centery = 0, centerz = 0;
-	double viewAngleXZ = 0, viewAngleXY = 0;
 
-	UINT envTex;
+	UINT spiderTex, glTex;
 
-public:
-	float alpha = 0, beta = 0, gama = 0, slide = 0;
 };

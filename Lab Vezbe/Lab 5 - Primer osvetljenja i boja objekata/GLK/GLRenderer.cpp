@@ -432,8 +432,6 @@ void CGLRenderer::DrawCylinder(double h, double r1, double r2, int nSeg, bool in
 		glEnd();
 	}
 
-	double nr, ny;
-	tie(nr, ny) = CalculateCylinderNormals(h, r1, r2);
 
 	// Omotac
 	glBegin(GL_TRIANGLE_STRIP);
@@ -442,8 +440,8 @@ void CGLRenderer::DrawCylinder(double h, double r1, double r2, int nSeg, bool in
 		{
 			double alphaRad = TO_RAD(alpha);
 
-			double nx = nr * cos(alphaRad);
-			double nz = nr * sin(alphaRad);
+			double nx, ny, nz;
+			CalculateConeNormals(h, r1, r2, alphaRad, nx, ny, nz);
 
 			glNormal3d(nx, ny, nz);
 
@@ -554,20 +552,21 @@ void CGLRenderer::DrawCubeFace(double a)
 	DrawNormals(normals);
 }
 
-tuple<double, double> CGLRenderer::CalculateCylinderNormals(double h, double r1, double r2)
-{
-	double r = (r1 - r2) / 2;
-	double l = sqrt(pow(h, 2) + pow(r, 2));
-
-	double nr = h / l;
-	double ny = r / l;
-
-	return { nr, ny };
-}
-
 #pragma endregion
 
 #pragma region Rotiranje i Zumiranje Pogleda
+
+void CGLRenderer::CalculateConeNormals(double h, double rBot, double rTop, double alphaRad, double& nx, double& ny, double& nz)
+{
+	double r = (rBot - rTop) / 2;
+	double l = sqrt(pow(h, 2) + pow(r, 2));
+
+	double nr = h / l;
+
+	ny = r / l;
+	nx = nr * cos(alphaRad);
+	nz = nr * sin(alphaRad);
+}
 
 void CGLRenderer::RotateView(double dXY, double dXZ)
 {

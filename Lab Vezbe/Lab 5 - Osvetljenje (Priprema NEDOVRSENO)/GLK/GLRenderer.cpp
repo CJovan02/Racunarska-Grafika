@@ -64,6 +64,8 @@ void CGLRenderer::PrepareScene(CDC *pDC)
 		// Globalno ambijentalno osvetljenje
 		GLfloat global_ambient[] = { .2, .2, .2, 1.0 };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+		//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+		//glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
 		ConfigureLightSources();
 	}
@@ -77,6 +79,7 @@ void CGLRenderer::DrawScene(CDC *pDC)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 
+		ConfigureLightPositions();
 		gluLookAt(eyex, eyey, eyez,
 			centerx, centery, centerz,
 			upx, upy, upz);
@@ -84,7 +87,6 @@ void CGLRenderer::DrawScene(CDC *pDC)
 		DrawAxis(100);
 
 		glTranslated(-15, 0, 0);
-		ConfigureLightPositions();
 
 		redMat.SetFace(GL_FRONT);
 		DrawCylinder(5, 2, 6, 60, true);
