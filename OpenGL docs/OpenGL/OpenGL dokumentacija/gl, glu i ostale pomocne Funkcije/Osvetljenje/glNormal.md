@@ -1,3 +1,6 @@
+# NEMOJ DA KORISTIS glNormal3**i**!!!!!!
+
+Taj **GLint** koji se unese se posle konvertuje u GLfloat, i bude isto, odnosno izgubis jedno 3 sata da nadjes de si se zajebao :)
 
 |                  |        |        |
 | ---------------- | ------ | ------ |

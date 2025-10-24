@@ -1,5 +1,7 @@
 ## Projekat koriscen za ovaj primer je dat na github repozitorijumu
 
+Ovo nije potrebno za ispit, samo malo dodatno objasnjenje osvetljenja i materijala.
+
 ## Realisticni materijali
 
 Da bi materijal bio koliko toliko realistican on bi **trebalo da reflektuje svaku boju barem malo**.
@@ -39,7 +41,7 @@ Ovo vazi i za ambijentalno i difuziono svojstvo.
 
 Bela refleksija koja se vidi na predmetima je **specular light** zajedno sa **shininess**.
 
-Izvor bi trebalo da emituje neutralnu specular svetlostu vecini situacija, osim ako ne pravimo laser ili neon light.
+Izvor bi trebalo da emituje neutralnu specular svetlost u vecini situacija, osim ako ne pravimo laser ili neon light.
 
 Kada se radi o nemetalnim objektima oni uglavnom reflektuju sve boje spekularnom svetla.
 Metal reflektuje spekularno svetlo isto kao i ambijentalno i difuziono.

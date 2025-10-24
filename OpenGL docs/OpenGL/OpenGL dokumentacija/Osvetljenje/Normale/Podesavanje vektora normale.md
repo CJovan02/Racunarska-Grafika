@@ -1,4 +1,6 @@
 
+# MNOGO BITNO!! -> [[Normale kod dvostranog osvetljnja]]
+
 **Vektor normale** je vektor koji je normalan na povrsinu nekog 3D objekta u nekoj datoj tacki. 
 On definise pod kojim uglom pada svetlost na objekat.
 

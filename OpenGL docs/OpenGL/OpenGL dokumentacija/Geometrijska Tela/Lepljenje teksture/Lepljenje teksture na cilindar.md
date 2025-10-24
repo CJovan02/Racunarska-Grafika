@@ -116,7 +116,7 @@ Da bi smo je invertovali, mozemo ili preko translacije da rotiramo bazu za 180 s
 
 ---
 
-E sad trebamo omotac da zelipimo, ovde se vidi da se omotac ne lepi odozgo nego **sa strane**, znaci iz **XY ravni**.
+E sad trebamo omotac da zelipimo, ovde se vidi da se omotac ne lepi odozgo nego se **obmotava** oko omotaca.
 Takodje je i formula za mapiranje koordinata drugacija.
 
 ### double tx = - (double) alpha / 360;

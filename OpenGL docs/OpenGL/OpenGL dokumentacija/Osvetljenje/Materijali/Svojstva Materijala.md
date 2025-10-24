@@ -11,7 +11,7 @@
 - **Tipične vrednosti**: Vrednosti se kreću od `0.0` (bez refleksije) do `1.0` (maksimalna refleksija).
 
 **Primer**: 
-Imamo ambijentalno osvetljnje [0.3, 0.3, 0.3, 1] sto je slabo sivo osvetljenje. 
+Imamo ambijentalno osvetljnje [0.3, 0.3, 0.3, 1] sto je slabo belo osvetljenje. 
 Zatim imamo materijal sa ambijentalnim svojstvom [0.1, 0.1, 0.1, 1]. 
 Ovo znaci da ce materijal reflektovati **10% crvenog, zelenog i plavog** spektra.
 

@@ -13,5 +13,7 @@ Na kraju je potrebno napraviti i konfigurisati izvor svetlosti.
 Da bi scena izgledala realisticno moramo korektno podesiti svojstva materijalima i izvorima svetlosti:
 - [[Kreiranje realisticnih materijala i izvora svetlosti]]
 
+### Jako bitno -> [[Normale kod dvostranog osvetljnja]]
+
 
 
